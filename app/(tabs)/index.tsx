@@ -279,9 +279,12 @@ export default function HomeScreen() {
   const categories = useMemo(() => {
     const cats = new Map<string, string>();
     memos.forEach((memo) => {
-      const key = `${memo.category.major}|${memo.category.minor}`;
-      if (!cats.has(key)) {
-        cats.set(key, memo.category.major);
+      // Safely handle missing category
+      if (memo.category && memo.category.major && memo.category.minor) {
+        const key = `${memo.category.major}|${memo.category.minor}`;
+        if (!cats.has(key)) {
+          cats.set(key, memo.category.major);
+        }
       }
     });
     return Array.from(cats.keys());
@@ -290,9 +293,10 @@ export default function HomeScreen() {
   // Filter memos by selected category
   const filteredMemos = useMemo(() => {
     if (!selectedCategory) return memos;
-    return memos.filter(
-      (memo) => `${memo.category.major}|${memo.category.minor}` === selectedCategory
-    );
+    return memos.filter((memo) => {
+      if (!memo.category || !memo.category.major || !memo.category.minor) return false;
+      return `${memo.category.major}|${memo.category.minor}` === selectedCategory;
+    });
   }, [memos, selectedCategory]);
 
   // Handle incoming share intent
