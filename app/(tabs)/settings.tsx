@@ -12,6 +12,7 @@ import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
+import { useSettings } from "@/hooks/use-settings";
 import { useMemos } from "@/hooks/use-memos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -70,6 +71,7 @@ function SettingsRow({
 export default function SettingsScreen() {
   const colors = useColors();
   const { memos, clearAllMemos } = useMemos();
+  const { settings: appSettings, updateSummaryLength, updateSummaryTone } = useSettings();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
 
   const handleClearMemos = () => {

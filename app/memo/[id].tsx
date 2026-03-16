@@ -18,6 +18,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useMemos } from "@/hooks/use-memos";
+import { useMemoSimilarity } from "@/hooks/use-memo-similarity";
 import type { Memo, Platform as MemoPlat, MemoContent } from "@/shared/types";
 
 const PLATFORM_CONFIG: Record<MemoPlat, { label: string; color: string; icon: string; maxChars: number }> = {
@@ -37,6 +38,9 @@ export default function MemoDetailScreen() {
   const [editingText, setEditingText] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [userNotes, setUserNotes] = useState<string>("");
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const { relatedMemos } = useMemoSimilarity(memos, id);
 
   useEffect(() => {
     const found = memos.find((m) => m.id === id);
@@ -45,6 +49,7 @@ export default function MemoDetailScreen() {
       const firstPlatform = found.memos[0]?.platform ?? "linkedin";
       setSelectedPlatform(firstPlatform);
       setEditingText(found.memos.find((m) => m.platform === firstPlatform)?.text ?? "");
+      setUserNotes(found.userNotes ?? "");
     }
   }, [id, memos]);
 
@@ -52,6 +57,15 @@ export default function MemoDetailScreen() {
     if (!memo) return "";
     return memo.memos.find((m) => m.platform === selectedPlatform)?.text ?? "";
   }, [memo, selectedPlatform]);
+
+  const handleSaveUserNotes = async () => {
+    if (!memo) return;
+    const updated = { ...memo, userNotes };
+    setMemo(updated);
+    await updateMemo(memo.id, updated);
+    setIsEditingNotes(false);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
 
   const handlePlatformChange = (platform: MemoPlat) => {
     if (isEditing && memo) {

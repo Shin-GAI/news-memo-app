@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
+import { useSettings } from "@/hooks/use-settings";
 import { trpc } from "@/lib/trpc";
 import { useMemos } from "@/hooks/use-memos";
 import type { Memo, SummarizeResponse } from "@/shared/types";
@@ -30,6 +31,7 @@ export default function ProcessScreen() {
   const router = useRouter();
   const { url } = useLocalSearchParams<{ url: string }>();
   const { saveMemo } = useMemos();
+  const { settings } = useSettings();
 
   const [step, setStep] = useState<ProcessStep>("fetching");
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +64,11 @@ export default function ProcessScreen() {
         await new Promise((r) => setTimeout(r, 400));
 
         setStep("generating");
-        const data = await summarizeMutation.mutateAsync({ url });
+        const data = await summarizeMutation.mutateAsync({
+          url,
+          summaryLength: settings.summaryLength,
+          summaryTone: settings.summaryTone,
+        });
 
         setResult(data);
         setStep("done");

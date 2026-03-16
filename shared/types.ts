@@ -28,6 +28,7 @@ export interface Memo {
   category: MemoCategory;
   createdAt: string;
   updatedAt: string;
+  userNotes?: string; // 사용자가 추가한 메모
 }
 
 export interface SummarizeRequest {
@@ -40,4 +41,12 @@ export interface SummarizeResponse {
   summary: string;
   memos: MemoContent[];
   category: MemoCategory;
+}
+
+export type SummaryLength = "short" | "medium" | "long";
+export type SummaryTone = "expert" | "casual";
+
+export interface AppSettings {
+  summaryLength: SummaryLength;
+  summaryTone: SummaryTone;
 }

@@ -96,10 +96,12 @@ export const appRouter = router({
         z.object({
           url: z.string().url("올바른 URL을 입력해주세요"),
           language: z.enum(["ko", "en"]).default("ko"),
+          summaryLength: z.enum(["short", "medium", "long"]).default("medium"),
+          summaryTone: z.enum(["expert", "casual"]).default("expert"),
         })
       )
       .mutation(async ({ input }): Promise<SummarizeResponse> => {
-        const { url, language } = input;
+        const { url, language, summaryLength, summaryTone } = input;
 
         // Fetch article content
         const { title, content } = await fetchArticleContent(url);
@@ -109,10 +111,14 @@ export const appRouter = router({
             ? "모든 응답은 반드시 한국어로 작성하세요."
             : "Write all responses in English.";
 
+        const toneInstruction = summaryTone === "expert" 
+          ? "Use formal, expert tone: write in '~함.' format (e.g., '분석함.', '제시함.') instead of casual tone."
+          : "Use casual, friendly tone: write in conversational style with '~해요' or '~해' format.";
+
         const systemPrompt = `You are an expert content analyst and professional social media strategist. ${langInstruction}
-Your task is to analyze news articles, categorize them, and create professional social media posts in expert tone.
+Your task is to analyze news articles, categorize them, and create professional social media posts.
 Always respond with valid JSON only, no markdown code blocks, no extra text outside JSON.
-Use formal, expert tone: write in "~함." format (e.g., "분석함.", "제시함.") instead of casual tone.`;
+${toneInstruction}`;
 
         const userPrompt = `Analyze this news article and create social media posts.
 
@@ -132,15 +138,15 @@ Respond with this exact JSON structure (no markdown, pure JSON):
   "memos": [
     {
       "platform": "linkedin",
-      "text": "Professional LinkedIn post (250-350 chars). Expert tone using '~함.' format (e.g., '분석함', '제시함'). Start with a hook, include 2-3 key insights in outline format (1. 2. 3.), end with a thought-provoking question or call-to-action. ALWAYS include the source link at the end: 🔗 SOURCE: ${url}. Add 3-5 relevant hashtags. Example: '이번 기술 혁신은 산업에 큰 영향을 미칠 것으로 예상됨.'"
+      "text": "Professional LinkedIn post. Adjust length based on summaryLength: short (150-200 chars), medium (250-350 chars), long (400-500 chars). Start with a hook, include key insights in outline format (1. 2. 3.), end with a thought-provoking question or call-to-action. ALWAYS include the source link at the end: 🔗 SOURCE: ${url}. Add 3-5 relevant hashtags."
     },
     {
       "platform": "twitter",
-      "text": "Concise Twitter/X post (max 250 chars). Expert tone using '~함.' format. Punchy, engaging, with 2-3 hashtags. ALWAYS include source link: ${url}. Example: '새로운 AI 모델이 성능을 크게 향상시킴.'"
+      "text": "Concise Twitter/X post. Adjust length based on summaryLength: short (max 150 chars), medium (max 250 chars), long (max 280 chars). Punchy, engaging, with 2-3 hashtags. ALWAYS include source link: ${url}."
     },
     {
       "platform": "general",
-      "text": "Detailed general memo (300-500 chars). Expert tone using '~함.' format. Comprehensive summary with 3-4 key insights in outline format (1. 2. 3. 4.), explain implications and significance, include specific data/numbers if available. ALWAYS include source link at the end: SOURCE: ${url}. Example: '1. 기술 혁신으로 생산성이 30% 증가함. 2. 시장 규모가 확대될 것으로 예상됨. 3. 경쟁 구도가 변할 가능성 높음.'"
+      "text": "Detailed general memo. Adjust length based on summaryLength: short (150-250 chars), medium (300-500 chars), long (600-800 chars). Comprehensive summary with key insights in outline format, explain implications and significance, include specific data/numbers if available. ALWAYS include source link at the end: SOURCE: ${url}."
     }
   ]
 }`;
