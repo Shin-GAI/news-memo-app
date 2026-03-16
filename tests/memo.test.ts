@@ -25,6 +25,10 @@ describe("Memo types", () => {
       articleTitle: "테스트 기사 제목",
       summary: "• 핵심 내용 1\n• 핵심 내용 2\n• 핵심 내용 3",
       memos,
+      category: {
+        major: "기술",
+        minor: "AI",
+      },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

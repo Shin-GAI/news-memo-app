@@ -109,9 +109,10 @@ export const appRouter = router({
             ? "모든 응답은 반드시 한국어로 작성하세요."
             : "Write all responses in English.";
 
-        const systemPrompt = `You are an expert content analyst and social media writer. ${langInstruction}
-Your task is to analyze news articles and create professional social media posts.
-Always respond with valid JSON only, no markdown code blocks, no extra text outside JSON.`;
+        const systemPrompt = `You are an expert content analyst and professional social media strategist. ${langInstruction}
+Your task is to analyze news articles, categorize them, and create professional social media posts in expert tone.
+Always respond with valid JSON only, no markdown code blocks, no extra text outside JSON.
+Use formal, expert tone: write in "~함." format (e.g., "분석함.", "제시함.") instead of casual tone.`;
 
         const userPrompt = `Analyze this news article and create social media posts.
 
@@ -123,19 +124,23 @@ ${content}
 Respond with this exact JSON structure (no markdown, pure JSON):
 {
   "articleTitle": "clean article title (max 100 chars)",
-  "summary": "3-5 key insights in outline format (개조식), using numbers or dashes. Example: 1. First insight\n2. Second insight\n3. Third insight (max 400 chars total)",
+  "summary": "3-5 key insights in outline format (개조식), using numbers. Example: 1. 첫 번째 인사이트\n2. 두 번째 인사이트\n3. 세 번째 인사이트 (max 400 chars total)",
+  "category": {
+    "major": "major category (기술, 경제, 사회, 정치, 문화, 과학, 스포츠 중 선택)",
+    "minor": "minor category (AI, 주식, 정책, 법안, 영화, 우주, 축구 등)"
+  },
   "memos": [
     {
       "platform": "linkedin",
-      "text": "Professional LinkedIn post (250-350 chars). Start with a hook, include 2-3 key insights in outline format (1. 2. 3.), end with a thought-provoking question or call-to-action. ALWAYS include the source link at the end: 🔗 SOURCE: ${url}. Add 3-5 relevant hashtags."
+      "text": "Professional LinkedIn post (250-350 chars). Expert tone using '~함.' format (e.g., '분석함', '제시함'). Start with a hook, include 2-3 key insights in outline format (1. 2. 3.), end with a thought-provoking question or call-to-action. ALWAYS include the source link at the end: 🔗 SOURCE: ${url}. Add 3-5 relevant hashtags. Example: '이번 기술 혁신은 산업에 큰 영향을 미칠 것으로 예상됨.'"
     },
     {
       "platform": "twitter",
-      "text": "Concise Twitter/X post (max 250 chars). Punchy, engaging, with 2-3 hashtags. ALWAYS include source link: ${url}"
+      "text": "Concise Twitter/X post (max 250 chars). Expert tone using '~함.' format. Punchy, engaging, with 2-3 hashtags. ALWAYS include source link: ${url}. Example: '새로운 AI 모델이 성능을 크게 향상시킴.'"
     },
     {
       "platform": "general",
-      "text": "General purpose memo (200-300 chars). Clear summary of the key points in outline format (1. 2. 3.). ALWAYS include source link at the end: SOURCE: ${url}"
+      "text": "Detailed general memo (300-500 chars). Expert tone using '~함.' format. Comprehensive summary with 3-4 key insights in outline format (1. 2. 3. 4.), explain implications and significance, include specific data/numbers if available. ALWAYS include source link at the end: SOURCE: ${url}. Example: '1. 기술 혁신으로 생산성이 30% 증가함. 2. 시장 규모가 확대될 것으로 예상됨. 3. 경쟁 구도가 변할 가능성 높음.'"
     }
   ]
 }`;
@@ -173,6 +178,10 @@ Respond with this exact JSON structure (no markdown, pure JSON):
           parsed = {
             articleTitle: title,
             summary: `• ${title}\n• 기사 내용을 분석했습니다.\n• 원문 링크를 확인해주세요.`,
+            category: {
+              major: "기타",
+              minor: "미분류",
+            },
             memos: [
               {
                 platform: "linkedin",

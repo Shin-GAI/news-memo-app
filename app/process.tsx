@@ -75,6 +75,7 @@ export default function ProcessScreen() {
           articleTitle: data.articleTitle,
           summary: data.summary,
           memos: data.memos,
+          category: data.category,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };

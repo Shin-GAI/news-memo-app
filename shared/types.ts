@@ -14,12 +14,18 @@ export interface MemoContent {
   text: string;
 }
 
+export interface MemoCategory {
+  major: string; // 대분류 (예: "기술", "경제", "사회")
+  minor: string; // 중분류 (예: "AI", "주식", "정책")
+}
+
 export interface Memo {
   id: string;
   articleUrl: string;
   articleTitle: string;
   summary: string;
   memos: MemoContent[];
+  category: MemoCategory;
   createdAt: string;
   updatedAt: string;
 }
@@ -33,4 +39,5 @@ export interface SummarizeResponse {
   articleTitle: string;
   summary: string;
   memos: MemoContent[];
+  category: MemoCategory;
 }

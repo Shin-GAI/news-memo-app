@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -273,6 +273,27 @@ export default function HomeScreen() {
   const { memos, loading, deleteMemo, loadMemos } = useMemos();
   const { sharedData, clearSharedData } = useShareIntent();
   const [showUrlModal, setShowUrlModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // Extract unique categories from memos
+  const categories = useMemo(() => {
+    const cats = new Map<string, string>();
+    memos.forEach((memo) => {
+      const key = `${memo.category.major}|${memo.category.minor}`;
+      if (!cats.has(key)) {
+        cats.set(key, memo.category.major);
+      }
+    });
+    return Array.from(cats.keys());
+  }, [memos]);
+
+  // Filter memos by selected category
+  const filteredMemos = useMemo(() => {
+    if (!selectedCategory) return memos;
+    return memos.filter(
+      (memo) => `${memo.category.major}|${memo.category.minor}` === selectedCategory
+    );
+  }, [memos, selectedCategory]);
 
   // Handle incoming share intent
   useEffect(() => {
@@ -363,7 +384,7 @@ export default function HomeScreen() {
         />
       ) : (
         <FlatList
-          data={memos}
+          data={filteredMemos}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <MemoCard
