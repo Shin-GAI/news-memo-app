@@ -123,19 +123,19 @@ ${content}
 Respond with this exact JSON structure (no markdown, pure JSON):
 {
   "articleTitle": "clean article title (max 100 chars)",
-  "summary": "3-5 key insights as bullet points, each starting with • (max 400 chars total)",
+  "summary": "3-5 key insights in outline format (개조식), using numbers or dashes. Example: 1. First insight\n2. Second insight\n3. Third insight (max 400 chars total)",
   "memos": [
     {
       "platform": "linkedin",
-      "text": "Professional LinkedIn post (200-300 chars). Start with a hook, include 2-3 key insights, end with a thought-provoking question or call-to-action. Add 3-5 relevant hashtags."
+      "text": "Professional LinkedIn post (250-350 chars). Start with a hook, include 2-3 key insights in outline format (1. 2. 3.), end with a thought-provoking question or call-to-action. ALWAYS include the source link at the end: 🔗 SOURCE: ${url}. Add 3-5 relevant hashtags."
     },
     {
       "platform": "twitter",
-      "text": "Concise Twitter/X post (max 250 chars). Punchy, engaging, with 2-3 hashtags."
+      "text": "Concise Twitter/X post (max 250 chars). Punchy, engaging, with 2-3 hashtags. ALWAYS include source link: ${url}"
     },
     {
       "platform": "general",
-      "text": "General purpose memo (150-250 chars). Clear summary of the key point and why it matters."
+      "text": "General purpose memo (200-300 chars). Clear summary of the key points in outline format (1. 2. 3.). ALWAYS include source link at the end: SOURCE: ${url}"
     }
   ]
 }`;
