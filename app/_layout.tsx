@@ -88,6 +88,21 @@ export default function RootLayout() {
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="oauth/callback" />
+            <Stack.Screen
+              name="process"
+              options={{
+                headerShown: false,
+                presentation: "modal",
+                animation: "slide_from_bottom",
+              }}
+            />
+            <Stack.Screen
+              name="memo/[id]"
+              options={{
+                headerShown: false,
+                animation: "slide_from_right",
+              }}
+            />
           </Stack>
           <StatusBar style="auto" />
         </QueryClientProvider>

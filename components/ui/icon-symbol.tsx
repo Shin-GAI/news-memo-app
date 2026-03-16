@@ -9,21 +9,48 @@ type IconMapping = Record<SymbolViewProps["name"], ComponentProps<typeof Materia
 type IconSymbolName = keyof typeof MAPPING;
 
 /**
- * Add your SF Symbols to Material Icons mappings here.
- * - see Material Icons in the [Icons Directory](https://icons.expo.fyi).
- * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
+ * SF Symbols to Material Icons mappings for NewsMemo app.
  */
 const MAPPING = {
+  // Navigation
   "house.fill": "home",
+  "gearshape.fill": "settings",
   "paperplane.fill": "send",
   "chevron.left.forwardslash.chevron.right": "code",
   "chevron.right": "chevron-right",
+  "chevron.left": "chevron-left",
+  // Actions
+  "square.and.arrow.up": "share",
+  "doc.on.doc": "content-copy",
+  "bookmark.fill": "bookmark",
+  "bookmark": "bookmark-border",
+  "trash": "delete",
+  "trash.fill": "delete",
+  "pencil": "edit",
+  "plus": "add",
+  "xmark": "close",
+  "xmark.circle.fill": "cancel",
+  "checkmark": "check",
+  "checkmark.circle.fill": "check-circle",
+  // Content
+  "newspaper": "article",
+  "newspaper.fill": "article",
+  "link": "link",
+  "magnifyingglass": "search",
+  "sparkles": "auto-awesome",
+  "brain.head.profile": "psychology",
+  "text.bubble": "chat-bubble-outline",
+  "clock": "schedule",
+  "clock.fill": "schedule",
+  // Status
+  "info.circle": "info",
+  "exclamationmark.triangle": "warning",
+  "arrow.clockwise": "refresh",
+  "arrow.left": "arrow-back",
 } as IconMapping;
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
- * This ensures a consistent look across platforms, and optimal resource usage.
- * Icon `name`s are based on SF Symbols and require manual mapping to Material Icons.
  */
 export function IconSymbol({
   name,

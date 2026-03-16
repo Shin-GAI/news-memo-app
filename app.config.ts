@@ -28,11 +28,11 @@ const schemeFromBundleId = `manus${timestamp}`;
 
 const env = {
   // App branding - update these values directly (do not use env vars)
-  appName: "NewsMemo - AI 뉴스 요약 & SNS 공유",
+  appName: "NewsMemo",
   appSlug: "news-memo-app",
   // S3 URL of the app logo - set this to the URL returned by generate_image when creating custom logo
   // Leave empty to use the default icon from assets/images/icon.png
-  logoUrl: "",
+  logoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663442172386/Vd83r4F6jMcbrZ2jRTVDnF/app-icon-bprBVEZNmf9zD74gBiZvby.png",
   scheme: schemeFromBundleId,
   iosBundleId: bundleId,
   androidPackage: bundleId,
@@ -66,18 +66,25 @@ const config: ExpoConfig = {
     package: env.androidPackage,
     permissions: ["POST_NOTIFICATIONS"],
     intentFilters: [
-      {
-        action: "VIEW",
-        autoVerify: true,
-        data: [
-          {
-            scheme: env.scheme,
-            host: "*",
-          },
-        ],
-        category: ["BROWSABLE", "DEFAULT"],
-      },
-    ],
+        {
+          action: "VIEW",
+          autoVerify: true,
+          data: [
+            {
+              scheme: env.scheme,
+              host: "*",
+            },
+          ],
+          category: ["BROWSABLE", "DEFAULT"],
+        },
+        {
+          action: "SEND",
+          category: ["DEFAULT"],
+          data: [
+            { mimeType: "text/plain" },
+          ],
+        },
+      ],
   },
   web: {
     bundler: "metro",
