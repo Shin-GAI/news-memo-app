@@ -19,6 +19,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { useMemos } from "@/hooks/use-memos";
 import { useShareIntent } from "@/hooks/use-share-intent";
+import { useMemoSearch, useAvailableCategories } from "@/hooks/use-memo-search";
 import type { Memo } from "@/shared/types";
 
 function EmptyState({
@@ -274,6 +275,11 @@ export default function HomeScreen() {
   const { sharedData, clearSharedData } = useShareIntent();
   const [showUrlModal, setShowUrlModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterStartDate, setFilterStartDate] = useState<Date | undefined>();
+  const [filterEndDate, setFilterEndDate] = useState<Date | undefined>();
+  const [filterCategories, setFilterCategories] = useState<string[]>([]);
 
   // Extract unique categories from memos
   const categories = useMemo(() => {
@@ -290,14 +296,25 @@ export default function HomeScreen() {
     return Array.from(cats.keys());
   }, [memos]);
 
-  // Filter memos by selected category
+  // Get available categories
+  const availableCategories = useAvailableCategories(memos);
+
+  // Search and filter memos
+  const searchResults = useMemoSearch(memos, {
+    query: searchQuery,
+    startDate: filterStartDate,
+    endDate: filterEndDate,
+    categories: filterCategories.length > 0 ? filterCategories : undefined,
+  });
+
+  // Filter by selected category if set
   const filteredMemos = useMemo(() => {
-    if (!selectedCategory) return memos;
-    return memos.filter((memo) => {
+    if (!selectedCategory) return searchResults;
+    return searchResults.filter((memo) => {
       if (!memo.category || !memo.category.major || !memo.category.minor) return false;
       return `${memo.category.major}|${memo.category.minor}` === selectedCategory;
     });
-  }, [memos, selectedCategory]);
+  }, [searchResults, selectedCategory]);
 
   // Handle incoming share intent
   useEffect(() => {
@@ -376,6 +393,37 @@ export default function HomeScreen() {
           </Pressable>
         </View>
       </View>
+
+      {/* Search Bar */}
+      {memos.length > 0 && (
+        <View style={[styles.searchSection, { borderBottomColor: colors.border }]}>
+          <View style={[styles.searchBar, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <IconSymbol name="magnifyingglass" size={16} color={colors.muted} />
+            <TextInput
+              placeholder="메모 검색..."
+              placeholderTextColor={colors.muted}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              style={[styles.searchInput, { color: colors.foreground }]}
+            />
+            {searchQuery.length > 0 && (
+              <Pressable onPress={() => setSearchQuery("")} hitSlop={8}>
+                <IconSymbol name="xmark.circle.fill" size={16} color={colors.muted} />
+              </Pressable>
+            )}
+          </View>
+          <Pressable
+            onPress={() => setShowFilters(!showFilters)}
+            style={({ pressed }) => [
+              styles.filterBtn,
+              { backgroundColor: (filterStartDate || filterEndDate || filterCategories.length > 0) ? colors.primary + "20" : colors.surface, borderColor: colors.border },
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <IconSymbol name="slider.horizontal.3" size={16} color={colors.primary} />
+          </Pressable>
+        </View>
+      )}
 
       {memos.length === 0 ? (
         <FlatList
@@ -461,6 +509,34 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+  },
+  searchSection: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 0.5,
+    gap: 8,
+  },
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 0.5,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    paddingVertical: 4,
+  },
+  filterBtn: {
+    width: 40,
+    height: 36,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 0.5,
   },
   listContent: {
     paddingHorizontal: 16,
