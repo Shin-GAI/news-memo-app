@@ -78,7 +78,11 @@ export function useMemoSearch(memos: Memo[], filters: SearchFilters) {
  */
 export function useAvailableCategories(memos: Memo[]): string[] {
   return useMemo(() => {
-    const categories = new Set(memos.map((m) => m.category.major));
+    const categories = new Set(
+      memos
+        .filter((m) => m.category && m.category.major)
+        .map((m) => m.category.major)
+    );
     return Array.from(categories).sort();
   }, [memos]);
 }
