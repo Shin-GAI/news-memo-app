@@ -145,7 +145,7 @@ function MemoCard({
 
       <View style={styles.cardFooter}>
         <View style={styles.platformBadges}>
-          {memo.memos.map((m) => (
+          {memo.memos && memo.memos.length > 0 && memo.memos.map((m) => (
             <View
               key={m.platform}
               style={[
