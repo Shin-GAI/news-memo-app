@@ -59,6 +59,7 @@ export function useMemoSimilarity(memos: Memo[], currentMemoId?: string) {
 
     const similarities = memos
       .filter((m) => m.id !== currentMemoId)
+      .filter((m) => m.category && m.category.major && current.category && current.category.major)
       .map((memo) => {
         // 카테고리 일치도 (같은 카테고리면 가중치 높음)
         const categoryMatch =
@@ -95,6 +96,7 @@ export function useMemoSimilarity(memos: Memo[], currentMemoId?: string) {
       // 현재 메모와 유사한 메모들 찾기
       memos.forEach((otherMemo) => {
         if (visited.has(otherMemo.id)) return;
+        if (!memo.category || !memo.category.major || !otherMemo.category || !otherMemo.category.major) return;
 
         const similarity = calculateSimilarity(memo.summary, otherMemo.summary);
         const categoryMatch = memo.category.major === otherMemo.category.major;
