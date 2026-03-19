@@ -77,13 +77,6 @@ const config: ExpoConfig = {
           ],
           category: ["BROWSABLE", "DEFAULT"],
         },
-        {
-          action: "SEND",
-          category: ["DEFAULT"],
-          data: [
-            { mimeType: "text/plain" },
-          ],
-        },
       ],
   },
   web: {
@@ -93,6 +86,12 @@ const config: ExpoConfig = {
   },
   plugins: [
     "expo-router",
+    [
+      "expo-share-intent",
+      {
+        androidIntentFilters: ["text/*"],
+      },
+    ],
     [
       "expo-audio",
       {
