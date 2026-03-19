@@ -147,6 +147,7 @@ class OnDeviceAIModule : Module() {
             "SM-S921", "SM-S926", "SM-S928",  // S24
             "SM-S931", "SM-S936", "SM-S938",  // S25
             "SM-F956", "SM-F946",              // Z Fold 6
+            "SM-F721",                         // Z Flip 4 (One UI 8.0+)
         )
         val model = Build.MODEL.uppercase()
         return supportedPrefixes.any { model.startsWith(it) }
