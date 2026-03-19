@@ -39,7 +39,7 @@ function EmptyState({
       <Text style={[styles.emptyDesc, { color: colors.muted }]}>
         크롬에서 뉴스 기사를 읽다가{"\n"}
         공유 버튼을 눌러{" "}
-        <Text style={{ color: colors.primary, fontWeight: "600" }}>NewsMemo</Text>를 선택하면{"\n"}
+        <Text style={{ color: colors.primary, fontWeight: "600" }}>뉴스쉐어</Text>를 선택하면{"\n"}
         AI가 핵심 내용을 요약해드립니다.
       </Text>
 
@@ -66,7 +66,7 @@ function EmptyState({
         {[
           { step: "1", text: "크롬에서 뉴스 기사 열기" },
           { step: "2", text: "주소창 옆 공유 버튼(⋮) 탭" },
-          { step: "3", text: "공유 시트에서 NewsMemo 선택" },
+          { step: "3", text: "공유 시트에서 뉴스쉐어 선택" },
           { step: "4", text: "AI 요약 확인 후 SNS 공유" },
         ].map(({ step, text }) => (
           <View key={step} style={styles.howToRow}>
@@ -373,7 +373,7 @@ export default function HomeScreen() {
           <View style={[styles.logoMark, { backgroundColor: colors.primary }]}>
             <IconSymbol name="sparkles" size={16} color="#fff" />
           </View>
-          <Text style={[styles.headerTitle, { color: colors.foreground }]}>NewsMemo</Text>
+          <Text style={[styles.headerTitle, { color: colors.foreground }]}>뉴스쉐어</Text>
         </View>
         <View style={styles.headerRight}>
           {memos.length > 0 && (

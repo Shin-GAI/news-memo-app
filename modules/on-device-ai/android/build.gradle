@@ -1,0 +1,51 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion safeExtGet("compileSdkVersion", 35)
+    namespace "expo.modules.ondeviceai"
+
+    defaultConfig {
+        minSdkVersion safeExtGet("minSdkVersion", 24)
+        targetSdkVersion safeExtGet("targetSdkVersion", 35)
+        versionCode 1
+        versionName "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+repositories {
+    mavenCentral()
+    google()
+}
+
+dependencies {
+    implementation project(':expo-modules-core')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
+
+    // Google AI Edge — Gemini Nano via Play Services GenAI (when available on device)
+    // Requires: Pixel 8+ / Android 14+ with AICore system service
+    // https://ai.google.dev/edge/mediapipe/solutions/genai/llm_inference/android
+    implementation("com.google.mediapipe:tasks-genai:0.10.22") {
+        // Transitive dependencies can conflict; exclude if needed
+        exclude group: "com.google.protobuf", module: "protobuf-javalite"
+    }
+
+    // Samsung Galaxy AI — via SamsungIntelligenceService (One UI 6.1+, Galaxy S24+)
+    // Note: Samsung's on-device AI SDK is distributed through Samsung's maven repo.
+    // If not available, the module falls back gracefully.
+    // compileOnly("com.samsung.android:intelligence-service:1.0.0")
+}
+
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}

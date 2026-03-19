@@ -91,6 +91,13 @@ export const appRouter = router({
   }),
 
   news: router({
+    // Fetch article content only (used by on-device AI path)
+    fetchArticle: publicProcedure
+      .input(z.object({ url: z.string().url("올바른 URL을 입력해주세요") }))
+      .mutation(async ({ input }) => {
+        return await fetchArticleContent(input.url);
+      }),
+
     summarize: publicProcedure
       .input(
         z.object({
