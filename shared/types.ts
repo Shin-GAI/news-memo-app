@@ -45,8 +45,10 @@ export interface SummarizeResponse {
 
 export type SummaryLength = "short" | "medium" | "long";
 export type SummaryTone = "expert" | "casual";
+export type AIEngineType = "cloud" | "google_edge" | "samsung_edge";
 
 export interface AppSettings {
   summaryLength: SummaryLength;
   summaryTone: SummaryTone;
+  aiEngine: AIEngineType;
 }
