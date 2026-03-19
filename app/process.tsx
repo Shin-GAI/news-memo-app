@@ -51,6 +51,7 @@ const ENGINE_BADGE: Record<string, { label: string; color: string; icon: string 
   cloud: { label: "클라우드 AI", color: "#4F86F7", icon: "cloud.fill" },
   google_edge: { label: "Google AI Edge", color: "#34A853", icon: "cpu" },
   samsung_edge: { label: "Samsung Galaxy AI", color: "#1428A0", icon: "cpu" },
+  fallback: { label: "클라우드 AI (자동 전환)", color: "#F59E0B", icon: "cloud.fill" },
 };
 
 export default function ProcessScreen() {
@@ -62,6 +63,7 @@ export default function ProcessScreen() {
 
   const [step, setStep] = useState<ProcessStep>("fetching");
   const [error, setError] = useState<string | null>(null);
+  const [fallbackToCloud, setFallbackToCloud] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
@@ -77,7 +79,7 @@ export default function ProcessScreen() {
       ? SAMSUNG_STEPS
       : CLOUD_STEPS;
 
-  const badge = ENGINE_BADGE[engine];
+  const badge = fallbackToCloud ? ENGINE_BADGE.fallback : ENGINE_BADGE[engine];
 
   useEffect(() => {
     Animated.parallel([
@@ -143,19 +145,21 @@ export default function ProcessScreen() {
     const nativeEngine = engine === "google_edge" ? "google" : "samsung";
     const prompt = buildOnDevicePrompt(title, content, url!, settings);
 
-    let responseText: string;
+    let responseText: string | null = null;
     try {
       responseText = await OnDeviceAI.generateText(prompt, nativeEngine);
     } catch (nativeErr) {
-      // On-device call failed — fall back to cloud with user-visible info
+      // On-device call failed — automatically fall back to cloud
       console.warn("[ProcessScreen] On-device AI failed, falling back to cloud:", nativeErr);
-      const engineLabel = engine === "google_edge" ? "Google AI Edge" : "Samsung Galaxy AI";
-      throw new Error(
-        `${engineLabel}를 사용할 수 없습니다.\n\n` +
-        `설정에서 '클라우드 AI'로 변경하거나, ` +
-        `지원 기기인지 확인해주세요.\n\n` +
-        `(${nativeErr instanceof Error ? nativeErr.message : String(nativeErr)})`
-      );
+      setFallbackToCloud(true);
+      setStep("generating");
+      const data = await summarizeMutation.mutateAsync({
+        url: url!,
+        summaryLength: settings.summaryLength,
+        summaryTone: settings.summaryTone,
+      });
+      await finishWithResult(data);
+      return;
     }
 
     const data = parseOnDeviceResponse(responseText, title, url!);
