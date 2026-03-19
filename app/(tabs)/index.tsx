@@ -11,6 +11,7 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -394,6 +395,42 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      {/* Category Tabs */}
+      {memos.length > 0 && categories.length > 0 && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={[styles.categoryTabs, { borderBottomColor: colors.border }]}
+          contentContainerStyle={styles.categoryTabsContent}
+        >
+          <Pressable
+            onPress={() => setSelectedCategory(null)}
+            style={({ pressed }) => [
+              styles.categoryTab,
+              !selectedCategory && { backgroundColor: colors.primary + "20", borderBottomWidth: 2, borderBottomColor: colors.primary },
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <Text style={[styles.categoryTabText, { color: !selectedCategory ? colors.primary : colors.muted }]}>전체</Text>
+          </Pressable>
+          {categories.map((cat) => (
+            <Pressable
+              key={cat}
+              onPress={() => setSelectedCategory(cat)}
+              style={({ pressed }) => [
+                styles.categoryTab,
+                selectedCategory === cat && { backgroundColor: colors.primary + "20", borderBottomWidth: 2, borderBottomColor: colors.primary },
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <Text style={[styles.categoryTabText, { color: selectedCategory === cat ? colors.primary : colors.muted }]}>
+                {cat.split("|")[0]}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      )}
+
       {/* Search Bar */}
       {memos.length > 0 && (
         <View style={[styles.searchSection, { borderBottomColor: colors.border }]}>
@@ -750,5 +787,54 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 15,
     fontWeight: "700",
+  },
+  categoryTabs: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 0.5,
+  },
+  categoryTabsContent: {
+    gap: 8,
+    paddingRight: 16,
+  },
+  categoryTab: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  categoryTabText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  filterPanel: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    gap: 12,
+  },
+  filterSection: {
+    gap: 8,
+  },
+  filterLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  categoryFilterGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  categoryFilterChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  categoryFilterChipText: {
+    fontSize: 12,
+    fontWeight: "500",
   },
 });

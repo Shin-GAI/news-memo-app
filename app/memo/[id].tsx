@@ -203,6 +203,16 @@ export default function MemoDetailScreen() {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
+        {/* Category Badge */}
+        {memo.category && memo.category.major && (
+          <View style={[styles.categoryBadgeContainer, { backgroundColor: colors.primary + "15" }]}>
+            <Text style={[styles.categoryBadgeText, { color: colors.primary }]}>
+              {memo.category.major}
+              {memo.category.minor && ` • ${memo.category.minor}`}
+            </Text>
+          </View>
+        )}
+
         {/* Article Info */}
         <Pressable
           onPress={handleOpenUrl}
@@ -533,5 +543,16 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 15,
     fontWeight: "700",
+  },
+  categoryBadgeContainer: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+    marginBottom: 4,
+  },
+  categoryBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
   },
 });
