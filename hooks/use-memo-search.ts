@@ -17,17 +17,17 @@ export function useMemoSearch(memos: Memo[], filters: SearchFilters) {
     let filtered = [...memos];
 
     // 텍스트 검색 (제목, 내용, 카테고리)
-    if (filters.query.trim()) {
+    if (filters.query && filters.query.trim()) {
       const query = filters.query.toLowerCase();
       filtered = filtered.filter((memo) => {
-        const titleMatch = memo.articleTitle.toLowerCase().includes(query);
-        const contentMatch = memo.summary.toLowerCase().includes(query);
+        const titleMatch = memo.articleTitle?.toLowerCase().includes(query) ?? false;
+        const contentMatch = memo.summary?.toLowerCase().includes(query) ?? false;
         const categoryMatch =
-          memo.category.major.toLowerCase().includes(query) ||
-          memo.category.minor.toLowerCase().includes(query);
-        const memoTextMatch = memo.memos.some((m) =>
-          m.text.toLowerCase().includes(query)
-        );
+          (memo.category?.major?.toLowerCase().includes(query) ?? false) ||
+          (memo.category?.minor?.toLowerCase().includes(query) ?? false);
+        const memoTextMatch = memo.memos?.some((m) =>
+          m.text?.toLowerCase().includes(query)
+        ) ?? false;
 
         return titleMatch || contentMatch || categoryMatch || memoTextMatch;
       });
