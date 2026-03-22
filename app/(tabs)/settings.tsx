@@ -13,9 +13,12 @@ import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
+import { useAppFont } from "@/hooks/use-app-font";
 import { useSettings } from "@/hooks/use-settings";
 import { useMemos } from "@/hooks/use-memos";
 import { useOnDeviceAIAvailability } from "@/hooks/use-on-device-ai";
+import { useThemeContext } from "@/lib/theme-provider";
+import { THEME_OPTIONS, FONT_OPTIONS } from "@/constants/color-themes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { AIEngineType } from "@/shared/types";
 
@@ -67,6 +70,12 @@ const ENGINE_OPTIONS: EngineOption[] = [
 
 // ── Sub-components ───────────────────────────────────────────────────────────
 
+function SectionLabel({ label, colors }: { label: string; colors: ReturnType<typeof useColors> }) {
+  return (
+    <Text style={[styles.sectionTitle, { color: colors.muted }]}>{label}</Text>
+  );
+}
+
 function EngineCard({
   option,
   selected,
@@ -102,18 +111,8 @@ function EngineCard({
           { backgroundColor: available ? "#34A85322" : colors.error + "18" },
         ]}
       >
-        <View
-          style={[
-            styles.statusDot,
-            { backgroundColor: available ? "#34A853" : colors.error },
-          ]}
-        />
-        <Text
-          style={[
-            styles.statusBadgeText,
-            { color: available ? "#34A853" : colors.error },
-          ]}
-        >
+        <View style={[styles.statusDot, { backgroundColor: available ? "#34A853" : colors.error }]} />
+        <Text style={[styles.statusBadgeText, { color: available ? "#34A853" : colors.error }]}>
           {available ? "사용 가능" : "지원 안 됨"}
         </Text>
       </View>
@@ -138,20 +137,15 @@ function EngineCard({
       style={({ pressed }) => [
         styles.engineCard,
         {
-          backgroundColor: selected
-            ? option.color + "12"
-            : colors.surface,
+          backgroundColor: selected ? option.color + "12" : colors.surface,
           borderColor: selected ? option.color : colors.border,
           opacity: !canSelect && !checking ? 0.55 : pressed ? 0.8 : 1,
         },
       ]}
     >
-      {/* Left icon */}
       <View style={[styles.engineIconBg, { backgroundColor: option.color + "20" }]}>
         <IconSymbol name={option.icon as never} size={22} color={option.color} />
       </View>
-
-      {/* Text */}
       <View style={styles.engineTextBlock}>
         <View style={styles.engineLabelRow}>
           <Text style={[styles.engineLabel, { color: colors.foreground }]}>{option.label}</Text>
@@ -160,17 +154,8 @@ function EngineCard({
         <Text style={[styles.engineDesc, { color: colors.muted }]}>{option.desc}</Text>
         <Text style={[styles.engineReq, { color: colors.muted }]}>{option.requirement}</Text>
       </View>
-
-      {/* Radio */}
-      <View
-        style={[
-          styles.radioOuter,
-          { borderColor: selected ? option.color : colors.border },
-        ]}
-      >
-        {selected && (
-          <View style={[styles.radioInner, { backgroundColor: option.color }]} />
-        )}
+      <View style={[styles.radioOuter, { borderColor: selected ? option.color : colors.border }]}>
+        {selected && <View style={[styles.radioInner, { backgroundColor: option.color }]} />}
       </View>
     </Pressable>
   );
@@ -180,6 +165,8 @@ function EngineCard({
 
 export default function SettingsScreen() {
   const colors = useColors();
+  const { fontFamily } = useAppFont();
+  const { themeVariant, setThemeVariant, fontVariant, setFontVariant } = useThemeContext();
   const { memos, clearAllMemos } = useMemos();
   const { settings, updateSummaryLength, updateSummaryTone, updateAIEngine } = useSettings();
   const availability = useOnDeviceAIAvailability();
@@ -226,7 +213,7 @@ export default function SettingsScreen() {
   return (
     <ScreenContainer containerClassName="bg-background">
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <Text style={[styles.headerTitle, { color: colors.foreground }]}>설정</Text>
+        <Text style={[styles.headerTitle, { color: colors.foreground, fontFamily }]}>설정</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
@@ -237,7 +224,7 @@ export default function SettingsScreen() {
             <IconSymbol name="sparkles" size={24} color="#fff" />
           </View>
           <View style={styles.appInfo}>
-            <Text style={[styles.appName, { color: colors.foreground }]}>뉴스쉐어</Text>
+            <Text style={[styles.appName, { color: colors.foreground, fontFamily }]}>뉴스쉐어</Text>
             <Text style={[styles.appDesc, { color: colors.muted }]}>AI 뉴스 요약 & SNS 공유</Text>
           </View>
           <Text style={[styles.appVersion, { color: colors.muted }]}>v1.0.0</Text>
@@ -245,7 +232,7 @@ export default function SettingsScreen() {
 
         {/* 사용 현황 */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>사용 현황</Text>
+          <SectionLabel label="사용 현황" colors={colors} />
           <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <View style={styles.statsRow}>
               {[
@@ -256,7 +243,7 @@ export default function SettingsScreen() {
                 <React.Fragment key={stat.label}>
                   {i > 0 && <View style={[styles.statDivider, { backgroundColor: colors.border }]} />}
                   <View style={styles.statItem}>
-                    <Text style={[styles.statValue, { color: colors.primary }]}>{stat.value}</Text>
+                    <Text style={[styles.statValue, { color: colors.primary, fontFamily }]}>{stat.value}</Text>
                     <Text style={[styles.statLabel, { color: colors.muted }]}>{stat.label}</Text>
                   </View>
                 </React.Fragment>
@@ -265,9 +252,108 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* ── 컬러 테마 ── */}
+        <View style={styles.section}>
+          <SectionLabel label="컬러 테마" colors={colors} />
+          <View style={styles.themeGrid}>
+            {THEME_OPTIONS.map((opt) => {
+              const isSelected = themeVariant === opt.id;
+              return (
+                <Pressable
+                  key={opt.id}
+                  onPress={() => {
+                    setThemeVariant(opt.id);
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
+                  style={({ pressed }) => [
+                    styles.themeCard,
+                    {
+                      backgroundColor: colors.surface,
+                      borderColor: isSelected ? opt.previewColors.primary : colors.border,
+                      borderWidth: isSelected ? 2 : StyleSheet.hairlineWidth,
+                    },
+                    pressed && { opacity: 0.75 },
+                  ]}
+                >
+                  {/* Mini preview */}
+                  <View style={[styles.themePreview, { backgroundColor: opt.previewColors.bg }]}>
+                    <View style={[styles.themePreviewBar, { backgroundColor: opt.previewColors.primary }]} />
+                    <View style={styles.themePreviewBody}>
+                      <View style={[styles.themePreviewCard, { backgroundColor: opt.previewColors.card }]} />
+                      <View style={[styles.themePreviewCard, { backgroundColor: opt.previewColors.card, marginTop: 4 }]} />
+                    </View>
+                    <View style={[styles.themePreviewDot, { backgroundColor: opt.previewColors.primary }]} />
+                  </View>
+                  {/* Label */}
+                  <View style={styles.themeCardLabel}>
+                    <Text style={[styles.themeCardName, { color: colors.foreground }]}>
+                      {opt.label}
+                    </Text>
+                    {isSelected && (
+                      <View style={[styles.selectedDot, { backgroundColor: opt.previewColors.primary }]} />
+                    )}
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* ── 글꼴 ── */}
+        <View style={styles.section}>
+          <SectionLabel label="글꼴" colors={colors} />
+          <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            {FONT_OPTIONS.map((opt, i) => {
+              const isSelected = fontVariant === opt.id;
+              const isLast = i === FONT_OPTIONS.length - 1;
+              return (
+                <Pressable
+                  key={opt.id}
+                  onPress={() => {
+                    setFontVariant(opt.id);
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
+                  style={({ pressed }) => [
+                    styles.fontRow,
+                    { borderBottomColor: colors.border, borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth },
+                    pressed && { backgroundColor: colors.primary + "08" },
+                  ]}
+                >
+                  {/* Preview text */}
+                  <View style={styles.fontPreviewBlock}>
+                    <Text
+                      style={[
+                        styles.fontPreviewText,
+                        { color: isSelected ? colors.primary : colors.foreground, fontFamily: opt.fontFamily },
+                      ]}
+                    >
+                      Aa 가나다
+                    </Text>
+                    <Text style={[styles.fontLabel, { color: colors.foreground, fontFamily: opt.fontFamily }]}>
+                      {opt.label}
+                    </Text>
+                    <Text style={[styles.fontDesc, { color: colors.muted }]}>{opt.desc}</Text>
+                  </View>
+                  {/* Radio */}
+                  <View
+                    style={[
+                      styles.radioOuter,
+                      { borderColor: isSelected ? colors.primary : colors.border },
+                    ]}
+                  >
+                    {isSelected && (
+                      <View style={[styles.radioInner, { backgroundColor: colors.primary }]} />
+                    )}
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
         {/* ── AI 엔진 선택 ── */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>AI 엔진</Text>
+          <SectionLabel label="AI 엔진" colors={colors} />
           <Text style={[styles.sectionDesc, { color: colors.muted }]}>
             요약에 사용할 AI 엔진을 선택하세요. 온디바이스 AI는 인터넷 없이 기기 내에서 처리되며
             개인정보 보호에 유리합니다.
@@ -285,8 +371,6 @@ export default function SettingsScreen() {
               />
             ))}
           </View>
-
-          {/* On-device AI note */}
           {currentEngine !== "cloud" && (
             <View style={[styles.infoBox, { backgroundColor: colors.primary + "0D", borderColor: colors.primary + "30" }]}>
               <IconSymbol name="info.circle.fill" size={14} color={colors.primary} />
@@ -298,11 +382,10 @@ export default function SettingsScreen() {
           )}
         </View>
 
-        {/* AI 설정 (요약 길이·어조) */}
+        {/* ── 요약 설정 ── */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>요약 설정</Text>
+          <SectionLabel label="요약 설정" colors={colors} />
           <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-
             {/* 요약 길이 */}
             <View style={[styles.settingsRow, { borderBottomColor: colors.border }]}>
               <View style={[styles.rowIcon, { backgroundColor: colors.primary + "15" }]}>
@@ -374,9 +457,9 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        {/* 데이터 관리 */}
+        {/* ── 데이터 관리 ── */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>데이터 관리</Text>
+          <SectionLabel label="데이터 관리" colors={colors} />
           <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Pressable
               onPress={handleClearMemos}
@@ -403,10 +486,10 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingVertical: 14,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   headerTitle: { fontSize: 20, fontWeight: "700", letterSpacing: -0.5 },
-  content: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 40, gap: 20 },
+  content: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 48, gap: 20 },
 
   // App card
   appCard: { flexDirection: "row", alignItems: "center", gap: 14, padding: 16, borderRadius: 16, borderWidth: 1 },
@@ -417,23 +500,79 @@ const styles = StyleSheet.create({
   appVersion: { fontSize: 12 },
 
   // Sections
-  section: { gap: 8 },
+  section: { gap: 10 },
   sectionTitle: {
-    fontSize: 12,
-    fontWeight: "600",
-    letterSpacing: 0.5,
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 0.8,
     textTransform: "uppercase",
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
   },
-  sectionDesc: { fontSize: 12, lineHeight: 18, paddingHorizontal: 4 },
-  sectionCard: { borderRadius: 14, borderWidth: 1, overflow: "hidden" },
+  sectionDesc: { fontSize: 12, lineHeight: 18, paddingHorizontal: 2 },
+  sectionCard: { borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, overflow: "hidden" },
 
   // Stats
   statsRow: { flexDirection: "row", padding: 16 },
   statItem: { flex: 1, alignItems: "center", gap: 4 },
   statValue: { fontSize: 24, fontWeight: "700", letterSpacing: -0.5 },
   statLabel: { fontSize: 11, textAlign: "center" },
-  statDivider: { width: 1, marginVertical: 4 },
+  statDivider: { width: StyleSheet.hairlineWidth, marginVertical: 4 },
+
+  // Theme grid (2×2)
+  themeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+  themeCard: {
+    width: "47.5%",
+    borderRadius: 14,
+    overflow: "hidden",
+  },
+  themePreview: {
+    height: 80,
+    padding: 8,
+    position: "relative",
+  },
+  themePreviewBar: {
+    height: 10,
+    borderRadius: 4,
+    width: "60%",
+    marginBottom: 8,
+  },
+  themePreviewBody: { gap: 4 },
+  themePreviewCard: {
+    height: 14,
+    borderRadius: 4,
+    width: "85%",
+    opacity: 0.85,
+  },
+  themePreviewDot: {
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+  },
+  themeCardLabel: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  themeCardName: { fontSize: 13, fontWeight: "600" },
+  selectedDot: { width: 8, height: 8, borderRadius: 4 },
+
+  // Font rows
+  fontRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    gap: 12,
+  },
+  fontPreviewBlock: { flex: 1, gap: 2 },
+  fontPreviewText: { fontSize: 20, fontWeight: "600" },
+  fontLabel: { fontSize: 14, fontWeight: "600", marginTop: 2 },
+  fontDesc: { fontSize: 11, lineHeight: 16, marginTop: 1 },
 
   // Engine list
   engineList: { gap: 10 },
@@ -467,15 +606,6 @@ const styles = StyleSheet.create({
   },
   statusDot: { width: 6, height: 6, borderRadius: 3 },
   statusBadgeText: { fontSize: 10, fontWeight: "600" },
-  radioOuter: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  radioInner: { width: 10, height: 10, borderRadius: 5 },
 
   // Info box
   infoBox: {
@@ -485,7 +615,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     alignItems: "flex-start",
-    marginTop: 4,
+    marginTop: 2,
   },
   infoText: { flex: 1, fontSize: 12, lineHeight: 18 },
 
@@ -496,12 +626,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     gap: 12,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   rowIcon: { width: 32, height: 32, borderRadius: 8, justifyContent: "center", alignItems: "center" },
   rowLabel: { flex: 1, fontSize: 15, fontWeight: "500" },
   rowRight: { flexDirection: "row", alignItems: "center", gap: 6 },
   rowValue: { fontSize: 14 },
+
+  // Radio
+  radioOuter: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  radioInner: { width: 10, height: 10, borderRadius: 5 },
 
   // Segment control
   segmentGroup: { flexDirection: "row", gap: 4 },

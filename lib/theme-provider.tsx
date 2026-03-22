@@ -1,19 +1,63 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Appearance, View, useColorScheme as useSystemColorScheme } from "react-native";
 import { colorScheme as nativewindColorScheme, vars } from "nativewind";
 
 import { SchemeColors, type ColorScheme } from "@/constants/theme";
+import { getThemePalette } from "@/constants/color-themes";
+import type { ThemeVariant, FontVariant } from "@/shared/types";
+
+const THEME_PREFS_KEY = "app_theme_prefs";
 
 type ThemeContextValue = {
   colorScheme: ColorScheme;
   setColorScheme: (scheme: ColorScheme) => void;
+  themeVariant: ThemeVariant;
+  setThemeVariant: (variant: ThemeVariant) => void;
+  fontVariant: FontVariant;
+  setFontVariant: (variant: FontVariant) => void;
 };
 
-const ThemeContext = createContext<ThemeContextValue | null>(null);
+const DEFAULT_CTX: ThemeContextValue = {
+  colorScheme: "light",
+  setColorScheme: () => {},
+  themeVariant: "default",
+  setThemeVariant: () => {},
+  fontVariant: "system",
+  setFontVariant: () => {},
+};
+
+const ThemeContext = createContext<ThemeContextValue>(DEFAULT_CTX);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useSystemColorScheme() ?? "light";
   const [colorScheme, setColorSchemeState] = useState<ColorScheme>(systemScheme);
+  const [themeVariant, setThemeVariantState] = useState<ThemeVariant>("default");
+  const [fontVariant, setFontVariantState] = useState<FontVariant>("system");
+
+  // Load persisted preferences on mount
+  useEffect(() => {
+    AsyncStorage.getItem(THEME_PREFS_KEY)
+      .then((raw) => {
+        if (!raw) return;
+        const prefs = JSON.parse(raw) as Partial<{
+          themeVariant: ThemeVariant;
+          fontVariant: FontVariant;
+        }>;
+        if (prefs.themeVariant) setThemeVariantState(prefs.themeVariant);
+        if (prefs.fontVariant) setFontVariantState(prefs.fontVariant);
+      })
+      .catch(() => {});
+  }, []);
+
+  const persistPrefs = useCallback(
+    (tv: ThemeVariant, fv: FontVariant) => {
+      AsyncStorage.setItem(THEME_PREFS_KEY, JSON.stringify({ themeVariant: tv, fontVariant: fv })).catch(
+        () => {}
+      );
+    },
+    []
+  );
 
   const applyScheme = useCallback((scheme: ColorScheme) => {
     nativewindColorScheme.set(scheme);
@@ -29,39 +73,67 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const setColorScheme = useCallback((scheme: ColorScheme) => {
-    setColorSchemeState(scheme);
-    applyScheme(scheme);
-  }, [applyScheme]);
+  const setColorScheme = useCallback(
+    (scheme: ColorScheme) => {
+      setColorSchemeState(scheme);
+      applyScheme(scheme);
+    },
+    [applyScheme]
+  );
+
+  const setThemeVariant = useCallback(
+    (variant: ThemeVariant) => {
+      setThemeVariantState(variant);
+      persistPrefs(variant, fontVariant);
+    },
+    [fontVariant, persistPrefs]
+  );
+
+  const setFontVariant = useCallback(
+    (variant: FontVariant) => {
+      setFontVariantState(variant);
+      persistPrefs(themeVariant, variant);
+    },
+    [themeVariant, persistPrefs]
+  );
 
   useEffect(() => {
     applyScheme(colorScheme);
   }, [applyScheme, colorScheme]);
 
+  // Use the active theme palette for NativeWind CSS vars
+  const palette = useMemo(
+    () => getThemePalette(themeVariant, colorScheme),
+    [themeVariant, colorScheme]
+  );
+
   const themeVariables = useMemo(
     () =>
       vars({
-        "color-primary": SchemeColors[colorScheme].primary,
-        "color-background": SchemeColors[colorScheme].background,
-        "color-surface": SchemeColors[colorScheme].surface,
-        "color-foreground": SchemeColors[colorScheme].foreground,
-        "color-muted": SchemeColors[colorScheme].muted,
-        "color-border": SchemeColors[colorScheme].border,
-        "color-success": SchemeColors[colorScheme].success,
-        "color-warning": SchemeColors[colorScheme].warning,
-        "color-error": SchemeColors[colorScheme].error,
+        "color-primary":    palette.primary,
+        "color-background": palette.background,
+        "color-surface":    palette.surface,
+        "color-foreground": palette.foreground,
+        "color-muted":      palette.muted,
+        "color-border":     palette.border,
+        "color-success":    palette.success,
+        "color-warning":    palette.warning,
+        "color-error":      palette.error,
       }),
-    [colorScheme],
+    [palette]
   );
 
   const value = useMemo(
     () => ({
       colorScheme,
       setColorScheme,
+      themeVariant,
+      setThemeVariant,
+      fontVariant,
+      setFontVariant,
     }),
-    [colorScheme, setColorScheme],
+    [colorScheme, setColorScheme, themeVariant, setThemeVariant, fontVariant, setFontVariant]
   );
-  console.log(value, themeVariables)
 
   return (
     <ThemeContext.Provider value={value}>
@@ -71,9 +143,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useThemeContext(): ThemeContextValue {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) {
-    throw new Error("useThemeContext must be used within ThemeProvider");
-  }
-  return ctx;
+  return useContext(ThemeContext);
 }
