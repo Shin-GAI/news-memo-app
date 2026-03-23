@@ -19,10 +19,20 @@ export const trpc = createTRPCReact<AppRouter>();
  * Call this once in your app's root layout.
  */
 export function createTRPCClient() {
+  let baseUrl: string;
+  try {
+    baseUrl = getApiBaseUrl();
+  } catch (e) {
+    // EXPO_PUBLIC_API_BASE_URL not set — use empty string so the error
+    // surfaces as a clear network error per request rather than crashing on startup.
+    console.error("[tRPC]", e instanceof Error ? e.message : e);
+    baseUrl = "";
+  }
+
   return trpc.createClient({
     links: [
       httpBatchLink({
-        url: `${getApiBaseUrl()}/api/trpc`,
+        url: `${baseUrl}/api/trpc`,
         // tRPC v11: transformer MUST be inside httpBatchLink, not at root
         transformer: superjson,
         async headers() {
