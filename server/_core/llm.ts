@@ -289,7 +289,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     payload.tool_choice = normalizedToolChoice;
   }
 
-  payload.max_tokens = 8192;
+  payload.max_tokens = 2048;
   // thinking budget is a Forge-specific extension; not supported by Google AI Studio
   if (!ENV.geminiApiKey) {
     payload.thinking = { budget_tokens: 128 };
@@ -313,6 +313,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       authorization: `Bearer ${resolveApiKey()}`,
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(50000),
   });
 
   if (!response.ok) {
