@@ -490,13 +490,9 @@ export default function SettingsScreen() {
               <Pressable
                 onPress={() => {
                   const trimmed = serverUrlInput.trim();
-                  if (trimmed && !trimmed.startsWith("http")) {
-                    Alert.alert("URL 형식 오류", "https:// 로 시작하는 URL을 입력해주세요.");
-                    return;
-                  }
                   updateServerUrl(trimmed);
                   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                  Alert.alert("저장됨", trimmed ? `서버 URL이 저장되었습니다.\n앱을 재시작하면 적용됩니다.` : "서버 URL이 초기화되었습니다.");
+                  Alert.alert("저장됨", trimmed ? `서버 URL이 저장되었습니다.` : "서버 URL이 초기화되었습니다.");
                 }}
                 style={({ pressed }) => [
                   styles.saveBtn,

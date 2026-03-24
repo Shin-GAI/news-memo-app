@@ -54,10 +54,8 @@ export function getApiBaseUrl(): string {
     return "http://localhost:3000";
   }
 
-  throw new Error(
-    "[Config] EXPO_PUBLIC_API_BASE_URL is not set. " +
-    "Set this environment variable to the API server URL before building the native app."
-  );
+  // Production fallback: use the Vercel deployment
+  return "https://news-memo-app.vercel.app";
 }
 
 export const SESSION_TOKEN_KEY = "app_session_token";
