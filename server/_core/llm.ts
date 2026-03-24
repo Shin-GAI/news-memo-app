@@ -213,7 +213,7 @@ const resolveApiUrl = () => {
 
 const resolveApiKey = () => ENV.geminiApiKey || ENV.forgeApiKey;
 
-const resolveModel = () => ENV.geminiApiKey ? "gemini-2.0-flash" : "gemini-2.5-flash";
+const resolveModel = () => ENV.geminiApiKey ? "gemini-2.5-flash" : "gemini-2.5-flash";
 
 const assertApiKey = () => {
   if (!resolveApiKey()) {
