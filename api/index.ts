@@ -3,6 +3,7 @@ import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { appRouter } from "../server/routers";
 import { createContext } from "../server/_core/context";
+import { registerOAuthRoutes } from "../server/_core/oauth";
 
 const app = express();
 
@@ -24,6 +25,9 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+// Register OAuth and auth routes
+registerOAuthRoutes(app);
+
 app.use(
   "/api/trpc",
   createExpressMiddleware({
@@ -31,6 +35,10 @@ app.use(
     createContext,
   })
 );
+
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true, timestamp: new Date().toISOString() });
+});
 
 app.get("/", (_req, res) => {
   res.json({ status: "ok", message: "뉴스쉐어 API 서버" });
