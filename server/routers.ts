@@ -145,15 +145,15 @@ Respond with this exact JSON structure (no markdown, pure JSON):
   "memos": [
     {
       "platform": "linkedin",
-      "text": "Professional LinkedIn post. Adjust length based on summaryLength: short (150-200 chars), medium (250-350 chars), long (400-500 chars). Start with a hook, include key insights in outline format (1. 2. 3.), end with a thought-provoking question or call-to-action. ALWAYS include the source link at the end: 🔗 SOURCE: ${url}. Add 3-5 relevant hashtags."
+      "text": "Professional LinkedIn post. Length setting is '${summaryLength}': short=150-200 chars, medium=250-350 chars, long=400-500 chars. Start with a hook, include key insights in outline format (1. 2. 3.), end with a thought-provoking question or call-to-action. ALWAYS include the source link at the end: 🔗 SOURCE: ${url}. Add 3-5 relevant hashtags."
     },
     {
       "platform": "twitter",
-      "text": "Concise Twitter/X post. Adjust length based on summaryLength: short (max 150 chars), medium (max 250 chars), long (max 280 chars). Punchy, engaging, with 2-3 hashtags. ALWAYS include source link: ${url}."
+      "text": "Concise Twitter/X post. Length setting is '${summaryLength}': short=max 150 chars, medium=max 250 chars, long=max 280 chars. Punchy, engaging, with 2-3 hashtags. ALWAYS include source link: ${url}."
     },
     {
       "platform": "general",
-      "text": "Detailed general memo. Adjust length based on summaryLength: short (150-250 chars), medium (300-500 chars), long (600-800 chars). Comprehensive summary with key insights in outline format, explain implications and significance, include specific data/numbers if available. ALWAYS include source link at the end: SOURCE: ${url}."
+      "text": "Detailed general memo. Length setting is '${summaryLength}': short=150-250 chars, medium=300-500 chars, long=600-800 chars. Comprehensive summary with key insights in outline format, explain implications and significance, include specific data/numbers if available. ALWAYS include source link at the end: SOURCE: ${url}."
     }
   ]
 }`;

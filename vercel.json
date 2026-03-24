@@ -1,5 +1,7 @@
 {
-  "buildCommand": "mkdir -p public",
+  "version": 2,
+  "framework": null,
+  "buildCommand": "mkdir -p public && echo '{\"status\":\"ok\"}' > public/health.json",
   "outputDirectory": "public",
   "functions": {
     "api/index.ts": {
