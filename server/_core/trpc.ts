@@ -5,6 +5,14 @@ import type { TrpcContext } from "./context";
 
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
+  // Expose the actual error message to the client (including in production).
+  // This makes server-side errors debuggable from the app.
+  errorFormatter({ shape, error }) {
+    return {
+      ...shape,
+      message: error.message,
+    };
+  },
 });
 
 export const router = t.router;
