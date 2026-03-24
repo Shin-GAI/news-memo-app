@@ -43,10 +43,21 @@ export function getApiBaseUrl(): string {
     if (apiHostname !== hostname) {
       return `${protocol}//${apiHostname}`;
     }
+    // On web with no port substitution, use same origin (API served from same host)
+    return `${protocol}//${hostname}`;
   }
 
-  // Fallback to empty (will use relative URL)
-  return "";
+  // On native (Android/iOS), a base URL is required.
+  // Set EXPO_PUBLIC_API_BASE_URL (or API_BASE_URL) env var to the deployed API server URL.
+  if (__DEV__) {
+    // In development, fall back to localhost:3000
+    return "http://localhost:3000";
+  }
+
+  throw new Error(
+    "[Config] EXPO_PUBLIC_API_BASE_URL is not set. " +
+    "Set this environment variable to the API server URL before building the native app."
+  );
 }
 
 export const SESSION_TOKEN_KEY = "app_session_token";
