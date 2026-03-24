@@ -4,6 +4,8 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { appRouter } from "../server/routers";
 import { createContext } from "../server/_core/context";
 import { registerOAuthRoutes } from "../server/_core/oauth";
+import { invokeLLM } from "../server/_core/llm";
+import { ENV } from "../server/_core/env";
 
 const app = express();
 
@@ -47,6 +49,27 @@ app.get("/api/health", (_req, res) => {
   };
   const aiKeyOk = env.GEMINI_API_KEY || env.BUILT_IN_FORGE_API_KEY;
   res.json({ ok: aiKeyOk, timestamp: new Date().toISOString(), env });
+});
+
+// Diagnostic endpoint: tests the actual LLM call end-to-end
+app.get("/api/test-ai", async (_req, res) => {
+  const hasGemini = !!ENV.geminiApiKey;
+  const hasForge = !!ENV.forgeApiKey;
+  if (!hasGemini && !hasForge) {
+    res.status(500).json({ ok: false, error: "No AI API key configured", hasGemini, hasForge });
+    return;
+  }
+  try {
+    const result = await invokeLLM({
+      messages: [{ role: "user", content: [{ type: "text", text: "Say 'ok' in one word." }] }],
+    });
+    const text = result.choices?.[0]?.message?.content;
+    res.json({ ok: true, response: text, model: result.model, hasGemini, hasForge });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[test-ai]", msg);
+    res.status(500).json({ ok: false, error: msg, hasGemini, hasForge });
+  }
 });
 
 app.get("/", (_req, res) => {
