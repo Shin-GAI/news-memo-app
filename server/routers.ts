@@ -16,7 +16,7 @@ async function fetchArticleContent(url: string): Promise<{ title: string; conten
         Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
       },
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!response.ok) {
@@ -110,6 +110,7 @@ export const appRouter = router({
       .mutation(async ({ input }): Promise<SummarizeResponse> => {
         const { url, language, summaryLength, summaryTone } = input;
 
+        console.log("[summarize] start url:", url);
         // Fetch article content
         const { title, content } = await fetchArticleContent(url);
 
@@ -158,6 +159,7 @@ Respond with this exact JSON structure (no markdown, pure JSON):
   ]
 }`;
 
+        console.log("[summarize] fetched article, invoking LLM for url:", url);
         const llmResult = await invokeLLM({
           messages: [
             { role: "system", content: [{ type: "text", text: systemPrompt }] },

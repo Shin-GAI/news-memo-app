@@ -313,12 +313,14 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       authorization: `Bearer ${resolveApiKey()}`,
     },
     body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(50000),
+    signal: AbortSignal.timeout(40000),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`LLM invoke failed: ${response.status} ${response.statusText} – ${errorText}`);
+    const msg = `LLM invoke failed: ${response.status} ${response.statusText} – ${errorText}`;
+    console.error("[invokeLLM]", msg);
+    throw new Error(msg);
   }
 
   return (await response.json()) as InvokeResult;
