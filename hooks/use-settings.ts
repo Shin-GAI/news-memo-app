@@ -49,8 +49,20 @@ export function useSettings() {
   const updateAIEngine = (engine: AIEngineType) =>
     persist({ ...settings, aiEngine: engine });
 
-  const updateServerUrl = (url: string) =>
-    persist({ ...settings, serverUrl: url.trim() });
+  const updateServerUrl = (url: string) => {
+    let normalized = url.trim();
+    if (normalized) {
+      // Auto-add https:// if no protocol specified
+      if (!normalized.startsWith("http://") && !normalized.startsWith("https://")) {
+        normalized = `https://${normalized}`;
+      }
+      // Upgrade http:// to https:// (Vercel and most deployments require HTTPS)
+      normalized = normalized.replace(/^http:\/\//i, "https://");
+      // Remove trailing slash
+      normalized = normalized.replace(/\/$/, "");
+    }
+    return persist({ ...settings, serverUrl: normalized });
+  };
 
   return { settings, loading, updateSummaryLength, updateSummaryTone, updateAIEngine, updateServerUrl };
 }
