@@ -37,7 +37,16 @@ app.use(
 );
 
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
+  const env = {
+    GEMINI_API_KEY: !!process.env.GEMINI_API_KEY,
+    BUILT_IN_FORGE_API_KEY: !!process.env.BUILT_IN_FORGE_API_KEY,
+    DATABASE_URL: !!process.env.DATABASE_URL,
+    JWT_SECRET: !!process.env.JWT_SECRET,
+    OAUTH_SERVER_URL: !!process.env.OAUTH_SERVER_URL,
+    VITE_APP_ID: !!process.env.VITE_APP_ID,
+  };
+  const aiKeyOk = env.GEMINI_API_KEY || env.BUILT_IN_FORGE_API_KEY;
+  res.json({ ok: aiKeyOk, timestamp: new Date().toISOString(), env });
 });
 
 app.get("/", (_req, res) => {

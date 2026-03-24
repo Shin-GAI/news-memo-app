@@ -3,7 +3,7 @@ import { ForbiddenError } from "../../shared/_core/errors.js";
 import axios, { type AxiosInstance } from "axios";
 import { parse as parseCookieHeader } from "cookie";
 import type { Request } from "express";
-import { SignJWT, jwtVerify } from "jose";
+import jwt from "jsonwebtoken";
 import type { User } from "../../drizzle/schema";
 import * as db from "../db";
 import { ENV } from "./env";
@@ -135,11 +135,6 @@ class SDKServer {
     return new Map(Object.entries(parsed));
   }
 
-  private getSessionSecret() {
-    const secret = ENV.cookieSecret;
-    return new TextEncoder().encode(secret);
-  }
-
   /**
    * Create a session token for a Manus user openId
    * @example
@@ -163,19 +158,14 @@ class SDKServer {
     payload: SessionPayload,
     options: { expiresInMs?: number } = {},
   ): Promise<string> {
-    const issuedAt = Date.now();
     const expiresInMs = options.expiresInMs ?? ONE_YEAR_MS;
-    const expirationSeconds = Math.floor((issuedAt + expiresInMs) / 1000);
-    const secretKey = this.getSessionSecret();
+    const expiresIn = Math.floor(expiresInMs / 1000);
 
-    return new SignJWT({
-      openId: payload.openId,
-      appId: payload.appId,
-      name: payload.name,
-    })
-      .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-      .setExpirationTime(expirationSeconds)
-      .sign(secretKey);
+    return jwt.sign(
+      { openId: payload.openId, appId: payload.appId, name: payload.name },
+      ENV.cookieSecret,
+      { algorithm: "HS256", expiresIn },
+    );
   }
 
   async verifySession(
@@ -187,11 +177,10 @@ class SDKServer {
     }
 
     try {
-      const secretKey = this.getSessionSecret();
-      const { payload } = await jwtVerify(cookieValue, secretKey, {
+      const payload = jwt.verify(cookieValue, ENV.cookieSecret, {
         algorithms: ["HS256"],
-      });
-      const { openId, appId, name } = payload as Record<string, unknown>;
+      }) as Record<string, unknown>;
+      const { openId, appId, name } = payload;
 
       if (!isNonEmptyString(openId) || !isNonEmptyString(appId) || !isNonEmptyString(name)) {
         console.warn("[Auth] Session payload missing required fields");
