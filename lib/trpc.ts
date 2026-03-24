@@ -1,6 +1,7 @@
 import { createTRPCReact } from "@trpc/react-query";
 import { httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { AppRouter } from "@/server/routers";
 import { getApiBaseUrl } from "@/constants/oauth";
 import * as Auth from "@/lib/_core/auth";
@@ -32,7 +33,21 @@ export function createTRPCClient() {
   return trpc.createClient({
     links: [
       httpBatchLink({
-        url: `${baseUrl}/api/trpc`,
+        url: async () => {
+          // 사용자가 설정에서 서버 URL을 지정했으면 우선 사용 (안드로이드/iOS용)
+          try {
+            const stored = await AsyncStorage.getItem("app_settings");
+            if (stored) {
+              const settings = JSON.parse(stored);
+              if (settings.serverUrl && settings.serverUrl.trim().length > 0) {
+                return `${settings.serverUrl.trim().replace(/\/$/, "")}/api/trpc`;
+              }
+            }
+          } catch {
+            // AsyncStorage 실패 시 기본값으로 폴백
+          }
+          return `${baseUrl}/api/trpc`;
+        },
         // tRPC v11: transformer MUST be inside httpBatchLink, not at root
         transformer: superjson,
         async headers() {

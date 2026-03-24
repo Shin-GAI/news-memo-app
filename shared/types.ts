@@ -53,4 +53,5 @@ export interface AppSettings {
   summaryLength: SummaryLength;
   summaryTone: SummaryTone;
   aiEngine: AIEngineType;
+  serverUrl?: string; // 안드로이드/iOS 네이티브용 서버 URL (예: https://3000-xxx.us-east5.run.app)
 }

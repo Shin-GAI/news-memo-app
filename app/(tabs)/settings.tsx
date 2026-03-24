@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
   Switch,
+  TextInput,
   ActivityIndicator,
 } from "react-native";
 import * as Haptics from "expo-haptics";
@@ -168,7 +169,8 @@ export default function SettingsScreen() {
   const { fontFamily } = useAppFont();
   const { themeVariant, setThemeVariant, fontVariant, setFontVariant } = useThemeContext();
   const { memos, clearAllMemos } = useMemos();
-  const { settings, updateSummaryLength, updateSummaryTone, updateAIEngine } = useSettings();
+  const { settings, updateSummaryLength, updateSummaryTone, updateAIEngine, updateServerUrl } = useSettings();
+  const [serverUrlInput, setServerUrlInput] = useState(settings.serverUrl ?? "");
   const availability = useOnDeviceAIAvailability();
   const [localSettings, setLocalSettings] = useState<LocalSettings>(DEFAULT_LOCAL);
 
@@ -457,6 +459,65 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* ── 서버 연결 (네이티브 앱용) ── */}
+        <View style={styles.section}>
+          <SectionLabel label="서버 연결" colors={colors} />
+          <Text style={[styles.sectionDesc, { color: colors.muted }]}>
+            안드로이드/iOS 앱에서 클라우드 AI를 사용하려면 서버 URL을 입력하세요.
+            웹 브라우저에서는 자동으로 감지됩니다.
+          </Text>
+          <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <View style={[styles.settingsRow, { borderBottomColor: "transparent", flexDirection: "column", alignItems: "flex-start", gap: 8 }]}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 10, width: "100%" }}>
+                <View style={[styles.rowIcon, { backgroundColor: colors.primary + "15" }]}>
+                  <IconSymbol name="server.rack" size={18} color={colors.primary} />
+                </View>
+                <Text style={[styles.rowLabel, { color: colors.foreground }]}>서버 URL</Text>
+              </View>
+              <TextInput
+                value={serverUrlInput}
+                onChangeText={setServerUrlInput}
+                placeholder="https://3000-xxx.us-east5.run.app"
+                placeholderTextColor={colors.muted}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="url"
+                style={[
+                  styles.urlInput,
+                  { color: colors.foreground, borderColor: colors.border, backgroundColor: colors.background },
+                ]}
+              />
+              <Pressable
+                onPress={() => {
+                  const trimmed = serverUrlInput.trim();
+                  if (trimmed && !trimmed.startsWith("http")) {
+                    Alert.alert("URL 형식 오류", "https:// 로 시작하는 URL을 입력해주세요.");
+                    return;
+                  }
+                  updateServerUrl(trimmed);
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  Alert.alert("저장됨", trimmed ? `서버 URL이 저장되었습니다.\n앱을 재시작하면 적용됩니다.` : "서버 URL이 초기화되었습니다.");
+                }}
+                style={({ pressed }) => [
+                  styles.saveBtn,
+                  { backgroundColor: colors.primary },
+                  pressed && { opacity: 0.8 },
+                ]}
+              >
+                <Text style={styles.saveBtnText}>저장</Text>
+              </Pressable>
+            </View>
+          </View>
+          {settings.serverUrl ? (
+            <View style={[styles.infoBox, { backgroundColor: "#34A85318", borderColor: "#34A85340" }]}>
+              <IconSymbol name="checkmark.circle.fill" size={14} color="#34A853" />
+              <Text style={[styles.infoText, { color: "#34A853" }]}>
+                현재 설정: {settings.serverUrl}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+
         {/* ── 데이터 관리 ── */}
         <View style={styles.section}>
           <SectionLabel label="데이터 관리" colors={colors} />
@@ -632,6 +693,23 @@ const styles = StyleSheet.create({
   rowLabel: { flex: 1, fontSize: 15, fontWeight: "500" },
   rowRight: { flexDirection: "row", alignItems: "center", gap: 6 },
   rowValue: { fontSize: 14 },
+
+  // Server URL input
+  urlInput: {
+    width: "100%",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 13,
+  },
+  saveBtn: {
+    alignSelf: "flex-end",
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  saveBtnText: { color: "#fff", fontSize: 14, fontWeight: "600" },
 
   // Radio
   radioOuter: {

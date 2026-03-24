@@ -49,5 +49,8 @@ export function useSettings() {
   const updateAIEngine = (engine: AIEngineType) =>
     persist({ ...settings, aiEngine: engine });
 
-  return { settings, loading, updateSummaryLength, updateSummaryTone, updateAIEngine };
+  const updateServerUrl = (url: string) =>
+    persist({ ...settings, serverUrl: url.trim() });
+
+  return { settings, loading, updateSummaryLength, updateSummaryTone, updateAIEngine, updateServerUrl };
 }
