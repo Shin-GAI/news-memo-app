@@ -29,3 +29,5 @@ jobs:
 
       - name: Build APK
         run: eas build --platform android --profile preview --non-interactive
+        env:
+          EXPO_PUBLIC_API_BASE_URL: https://news-memo-app.vercel.app
