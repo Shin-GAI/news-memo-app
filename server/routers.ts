@@ -10,18 +10,28 @@ import type { SummarizeResponse, MemoContent } from "../shared/types";
 // Fetch article content from URL
 async function fetchArticleContent(url: string): Promise<{ title: string; content: string }> {
   try {
+    const origin = new URL(url).origin;
     const response = await fetch(url, {
+      redirect: "follow",
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        Referer: origin,
+        "sec-fetch-dest": "document",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-user": "?1",
+        "upgrade-insecure-requests": "1",
+        "cache-control": "max-age=0",
       },
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const html = await response.text();
@@ -75,8 +85,9 @@ async function fetchArticleContent(url: string): Promise<{ title: string; conten
 
     return { title, content };
   } catch (error) {
-    console.error("[fetchArticleContent] Error:", error);
-    throw new Error("기사를 불러오는 데 실패했습니다. URL을 확인해주세요.");
+    const detail = error instanceof Error ? error.message : String(error);
+    console.error("[fetchArticleContent] Error fetching", url, "->", detail);
+    throw new Error(`기사를 불러오는 데 실패했습니다. (${detail})`);
   }
 }
 
