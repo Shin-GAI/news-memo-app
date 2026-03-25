@@ -13,7 +13,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://news-memo-361j5u2on-shin-gais-projects.vercel.app"
+        "EXPO_PUBLIC_API_BASE_URL": "https://news-memo-app.vercel.app"
       }
     },
     "production": {
