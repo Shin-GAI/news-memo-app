@@ -105,18 +105,7 @@ export default function ProcessScreen() {
       } catch (err) {
         console.error("[ProcessScreen] Error:", err);
         const msg = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
-        const isNetworkError =
-          msg.includes("Invalid URL") ||
-          msg.includes("Network request failed") ||
-          msg.includes("Failed to fetch") ||
-          msg.includes("fetch failed") ||
-          msg.includes("ECONNREFUSED") ||
-          msg.includes("ENOTFOUND");
-        setError(
-          isNetworkError
-            ? "서버에 연결할 수 없습니다.\n네트워크 연결을 확인하거나 설정에서 서버 URL을 확인해 주세요."
-            : msg
-        );
+        setError(msg);
         setStep("error");
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
