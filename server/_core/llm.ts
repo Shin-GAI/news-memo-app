@@ -213,7 +213,12 @@ const resolveApiUrl = () => {
 
 const resolveApiKey = () => ENV.geminiApiKey || ENV.forgeApiKey;
 
-const resolveModel = () => ENV.geminiApiKey ? "gemini-2.5-flash" : "gemini-2.5-flash";
+const resolveModel = () => {
+  // Allow overriding via GEMINI_MODEL env var (e.g. "gemini-2.0-flash", "gemini-1.5-pro")
+  const envModel = process.env.GEMINI_MODEL?.trim();
+  if (envModel) return envModel;
+  return "gemini-2.5-flash";
+};
 
 const assertApiKey = () => {
   if (!resolveApiKey()) {

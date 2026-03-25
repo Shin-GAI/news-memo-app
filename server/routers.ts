@@ -3,6 +3,7 @@ import { COOKIE_NAME } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
 import { invokeLLM } from "./_core/llm";
 import type { SummarizeResponse, MemoContent } from "../shared/types";
 
@@ -112,7 +113,15 @@ export const appRouter = router({
 
         console.log("[summarize] start url:", url);
         // Fetch article content
-        const { title, content } = await fetchArticleContent(url);
+        let title: string, content: string;
+        try {
+          ({ title, content } = await fetchArticleContent(url));
+        } catch (err) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: err instanceof Error ? err.message : "기사를 불러오는 데 실패했습니다.",
+          });
+        }
 
         const langInstruction =
           language === "ko"
@@ -160,12 +169,20 @@ Respond with this exact JSON structure (no markdown, pure JSON):
 }`;
 
         console.log("[summarize] fetched article, invoking LLM for url:", url);
-        const llmResult = await invokeLLM({
-          messages: [
-            { role: "system", content: [{ type: "text", text: systemPrompt }] },
-            { role: "user", content: [{ type: "text", text: userPrompt }] },
-          ],
-        });
+        let llmResult: Awaited<ReturnType<typeof invokeLLM>>;
+        try {
+          llmResult = await invokeLLM({
+            messages: [
+              { role: "system", content: [{ type: "text", text: systemPrompt }] },
+              { role: "user", content: [{ type: "text", text: userPrompt }] },
+            ],
+          });
+        } catch (err) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: err instanceof Error ? err.message : "AI 요약 중 오류가 발생했습니다.",
+          });
+        }
 
         const responseText = (() => {
           const choice = llmResult.choices?.[0];
