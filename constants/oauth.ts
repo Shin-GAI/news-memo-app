@@ -55,7 +55,7 @@ export function getApiBaseUrl(): string {
   }
 
   // Production fallback: use the Vercel deployment
-  return "https://news-memo-app.vercel.app";
+  return "https://news-memo-361j5u2on-shin-gais-projects.vercel.app";
 }
 
 export const SESSION_TOKEN_KEY = "app_session_token";
