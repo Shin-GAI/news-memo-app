@@ -158,10 +158,11 @@ ${content}
 Respond with this exact JSON structure (no markdown, pure JSON):
 {
   "articleTitle": "clean article title (max 100 chars)",
-  "summary": "3-5 key insights in outline format (개조식), using numbers. Example: 1. 첫 번째 인사이트\n2. 두 번째 인사이트\n3. 세 번째 인사이트 (max 400 chars total)",
+  "summary": "Formal report-style summary in Korean outline format (개조식). Format exactly:\n[제목] <brief article title>\n[링크] ${url}\n1. <key fact or finding from article>\n2. <key fact or finding from article>\n3. <key fact or finding from article>\n(add points 4–10 only if article contains additional distinct key facts)\nRules: report facts and figures from the article only. No opinions, analysis, questions, or commentary beyond what the article states. Max 400 chars total.",
   "category": {
-    "major": "major category (기술, 경제, 사회, 정치, 문화, 과학, 스포츠 중 선택)",
-    "minor": "minor category (AI, 주식, 정책, 법안, 영화, 우주, 축구 등)"
+    "major": "대주제 (기술, 경제, 사회, 정치, 문화, 과학, 스포츠, 국제 등)",
+    "mid": "중주제 (대주제 하위 분류, 예: AI·반도체·바이오·부동산·외교·교육 등)",
+    "minor": "소주제 (중주제 하위 세부 분류, 예: 생성AI, 금리인상, 대선후보 등)"
   },
   "memos": [
     {

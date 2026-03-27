@@ -15,8 +15,9 @@ export interface MemoContent {
 }
 
 export interface MemoCategory {
-  major: string; // 대분류 (예: "기술", "경제", "사회")
-  minor: string; // 중분류 (예: "AI", "주식", "정책")
+  major: string;  // 대주제 (예: "기술", "경제", "사회")
+  mid?: string;   // 중주제 (예: "AI·반도체", "부동산", "외교")
+  minor?: string; // 소주제 (예: "생성AI", "금리인상", "대선후보")
 }
 
 export interface Memo {

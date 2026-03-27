@@ -251,6 +251,7 @@ export default function MemoDetailScreen() {
               <View style={[styles.categoryDot, { backgroundColor: categoryColor }]} />
               <Text style={[styles.categoryChipText, { color: categoryColor }]}>
                 {memo.category.major}
+                {memo.category.mid ? ` · ${memo.category.mid}` : ""}
                 {memo.category.minor ? ` · ${memo.category.minor}` : ""}
               </Text>
             </View>
