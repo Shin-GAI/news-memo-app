@@ -98,27 +98,27 @@ const RAW: Record<ThemeVariant, Record<ColorScheme, RawEntry>> = {
     },
   },
 
-  // ── Blue (deep blue) ──────────────────────────────────────────────────
-  blue: {
+  // ── Green (pastel green) ──────────────────────────────────────────────
+  green: {
     light: {
-      primary:    "#0047CC",
-      accent:     "#0099DD",
-      background: "#EDF2FF",
+      primary:    "#3A9B72",
+      accent:     "#52C98A",
+      background: "#F0FAF5",
       surface:    "#FFFFFF",
       card:       "#FFFFFF",
-      foreground: "#02123D",
-      muted:      "#526080",
-      border:     "#C5D5F0",
+      foreground: "#0D2B1A",
+      muted:      "#5C7D68",
+      border:     "#C3E6D4",
     },
     dark: {
-      primary:    "#6B9FFF",
-      accent:     "#33BBFF",
-      background: "#030C20",
-      surface:    "#091630",
-      card:       "#0E1E3F",
-      foreground: "#D8E6FF",
-      muted:      "#6A84AA",
-      border:     "#162A50",
+      primary:    "#4DC98A",
+      accent:     "#2D9E6B",
+      background: "#031A0E",
+      surface:    "#082015",
+      card:       "#0C2B1C",
+      foreground: "#D4F4E3",
+      muted:      "#5C8F72",
+      border:     "#0F3320",
     },
   },
 
@@ -157,9 +157,9 @@ export const THEME_PALETTES: Record<ThemeVariant, Record<ColorScheme, AppColorPa
     light: build("light", RAW.mono.light),
     dark:  build("dark",  RAW.mono.dark),
   },
-  blue: {
-    light: build("light", RAW.blue.light),
-    dark:  build("dark",  RAW.blue.dark),
+  green: {
+    light: build("light", RAW.green.light),
+    dark:  build("dark",  RAW.green.dark),
   },
   pink: {
     light: build("light", RAW.pink.light),
@@ -196,10 +196,10 @@ export const THEME_OPTIONS: ThemeInfo[] = [
     previewColors: { bg: "#F5F5F5", primary: "#111111", card: "#FFFFFF" },
   },
   {
-    id: "blue",
-    label: "딥 블루",
-    desc: "짙은 블루 컬러 컨셉",
-    previewColors: { bg: "#EDF2FF", primary: "#0047CC", card: "#FFFFFF" },
+    id: "green",
+    label: "파스텔 그린",
+    desc: "부드러운 그린 계열 테마",
+    previewColors: { bg: "#F0FAF5", primary: "#3A9B72", card: "#FFFFFF" },
   },
   {
     id: "pink",
@@ -231,13 +231,13 @@ export const FONT_OPTIONS: FontInfo[] = [
     fontFamily: Platform.select({ ios: "Georgia", android: "serif", default: "serif" }),
   },
   {
-    id: "rounded",
-    label: "둥근체",
-    desc: "Avenir / Roboto Medium — 부드럽고 친근한 느낌",
+    id: "handwriting",
+    label: "손글씨체",
+    desc: "Nanum Pen Script — 가독성 좋은 손글씨 느낌",
     fontFamily: Platform.select({
-      ios: "Avenir Next",
-      android: "sans-serif-medium",
-      default: "sans-serif-medium",
+      ios: "Noteworthy",
+      android: "casual",
+      default: "cursive",
     }),
   },
 ];

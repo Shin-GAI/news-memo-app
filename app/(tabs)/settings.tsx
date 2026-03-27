@@ -9,6 +9,7 @@ import {
   Switch,
   TextInput,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
@@ -222,11 +223,9 @@ export default function SettingsScreen() {
 
         {/* App info */}
         <View style={[styles.appCard, { backgroundColor: colors.primary + "10", borderColor: colors.primary + "30" }]}>
-          <View style={[styles.appIconBg, { backgroundColor: colors.primary }]}>
-            <IconSymbol name="sparkles" size={24} color="#fff" />
-          </View>
+          <Image source={require("@/assets/images/icon.png")} style={styles.appIconBg} />
           <View style={styles.appInfo}>
-            <Text style={[styles.appName, { color: colors.foreground, fontFamily }]}>뉴스쉐어</Text>
+            <Text style={[styles.appName, { color: colors.foreground, fontFamily }]}>NewShare</Text>
             <Text style={[styles.appDesc, { color: colors.muted }]}>AI 뉴스 요약 & SNS 공유</Text>
           </View>
           <Text style={[styles.appVersion, { color: colors.muted }]}>v1.0.0</Text>
@@ -550,7 +549,7 @@ const styles = StyleSheet.create({
 
   // App card
   appCard: { flexDirection: "row", alignItems: "center", gap: 14, padding: 16, borderRadius: 16, borderWidth: 1 },
-  appIconBg: { width: 48, height: 48, borderRadius: 12, justifyContent: "center", alignItems: "center" },
+  appIconBg: { width: 48, height: 48, borderRadius: 12 },
   appInfo: { flex: 1, gap: 2 },
   appName: { fontSize: 17, fontWeight: "700", letterSpacing: -0.3 },
   appDesc: { fontSize: 13 },

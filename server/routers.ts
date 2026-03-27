@@ -10,18 +10,28 @@ import type { SummarizeResponse, MemoContent } from "../shared/types";
 // Fetch article content from URL
 async function fetchArticleContent(url: string): Promise<{ title: string; content: string }> {
   try {
+    const origin = new URL(url).origin;
     const response = await fetch(url, {
+      redirect: "follow",
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        Referer: origin,
+        "sec-fetch-dest": "document",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-user": "?1",
+        "upgrade-insecure-requests": "1",
+        "cache-control": "max-age=0",
       },
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const html = await response.text();
@@ -75,8 +85,9 @@ async function fetchArticleContent(url: string): Promise<{ title: string; conten
 
     return { title, content };
   } catch (error) {
-    console.error("[fetchArticleContent] Error:", error);
-    throw new Error("기사를 불러오는 데 실패했습니다. URL을 확인해주세요.");
+    const detail = error instanceof Error ? error.message : String(error);
+    console.error("[fetchArticleContent] Error fetching", url, "->", detail);
+    throw new Error(`기사를 불러오는 데 실패했습니다. (${detail})`);
   }
 }
 
@@ -147,10 +158,11 @@ ${content}
 Respond with this exact JSON structure (no markdown, pure JSON):
 {
   "articleTitle": "clean article title (max 100 chars)",
-  "summary": "3-5 key insights in outline format (개조식), using numbers. Example: 1. 첫 번째 인사이트\n2. 두 번째 인사이트\n3. 세 번째 인사이트 (max 400 chars total)",
+  "summary": "Formal report-style summary in Korean outline format (개조식). Format exactly:\n[제목] <brief article title>\n[링크] ${url}\n1. <key fact or finding from article>\n2. <key fact or finding from article>\n3. <key fact or finding from article>\n(add points 4–10 only if article contains additional distinct key facts)\nRules: report facts and figures from the article only. No opinions, analysis, questions, or commentary beyond what the article states. Max 400 chars total.",
   "category": {
-    "major": "major category (기술, 경제, 사회, 정치, 문화, 과학, 스포츠 중 선택)",
-    "minor": "minor category (AI, 주식, 정책, 법안, 영화, 우주, 축구 등)"
+    "major": "대주제 (기술, 경제, 사회, 정치, 문화, 과학, 스포츠, 국제 등)",
+    "mid": "중주제 (대주제 하위 분류, 예: AI·반도체·바이오·부동산·외교·교육 등)",
+    "minor": "소주제 (중주제 하위 세부 분류, 예: 생성AI, 금리인상, 대선후보 등)"
   },
   "memos": [
     {
@@ -176,6 +188,7 @@ Respond with this exact JSON structure (no markdown, pure JSON):
               { role: "system", content: [{ type: "text", text: systemPrompt }] },
               { role: "user", content: [{ type: "text", text: userPrompt }] },
             ],
+            responseFormat: { type: "json_object" },
           });
         } catch (err) {
           throw new TRPCError({

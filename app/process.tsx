@@ -64,6 +64,7 @@ export default function ProcessScreen() {
   const [step, setStep] = useState<ProcessStep>("fetching");
   const [error, setError] = useState<string | null>(null);
   const [fallbackToCloud, setFallbackToCloud] = useState(false);
+  const [savedMemoId, setSavedMemoId] = useState<string | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
@@ -184,13 +185,7 @@ export default function ProcessScreen() {
     };
 
     await saveMemo(memo);
-
-    setTimeout(() => {
-      router.replace({
-        pathname: "/memo/[id]" as never,
-        params: { id: memo.id, isNew: "true" },
-      });
-    }, 800);
+    setSavedMemoId(memo.id);
   };
 
   const currentStepIndex = STEPS.findIndex((s) => s.key === step);
@@ -282,6 +277,37 @@ export default function ProcessScreen() {
                 );
               })}
             </View>
+
+            {step === "done" && savedMemoId && (
+              <View style={styles.doneActions}>
+                <Pressable
+                  onPress={() => router.back()}
+                  style={({ pressed }) => [
+                    styles.doneBtn,
+                    { backgroundColor: colors.primary },
+                    pressed && { opacity: 0.85 },
+                  ]}
+                >
+                  <IconSymbol name="checkmark" size={18} color="#fff" />
+                  <Text style={styles.doneBtnText}>완료</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() =>
+                    router.replace({
+                      pathname: "/memo/[id]" as never,
+                      params: { id: savedMemoId, isNew: "true" },
+                    })
+                  }
+                  style={({ pressed }) => [
+                    styles.viewDetailBtn,
+                    { borderColor: colors.border },
+                    pressed && { opacity: 0.7 },
+                  ]}
+                >
+                  <Text style={[styles.viewDetailBtnText, { color: colors.muted }]}>메모 보기</Text>
+                </Pressable>
+              </View>
+            )}
           </View>
         ) : (
           <View style={styles.errorContainer}>
@@ -375,4 +401,21 @@ const styles = StyleSheet.create({
   errorDesc: { fontSize: 14, lineHeight: 21, textAlign: "center" },
   retryBtn: { paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14, marginTop: 8 },
   retryBtnText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  doneActions: { width: "100%", gap: 10, marginTop: 8, paddingHorizontal: 20 },
+  doneBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 16,
+    borderRadius: 14,
+  },
+  doneBtnText: { color: "#fff", fontSize: 17, fontWeight: "700" },
+  viewDetailBtn: {
+    alignItems: "center",
+    paddingVertical: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  viewDetailBtnText: { fontSize: 15, fontWeight: "500" },
 });

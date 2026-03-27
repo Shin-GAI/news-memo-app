@@ -73,7 +73,7 @@ app.get("/api/test-ai", async (_req, res) => {
 });
 
 app.get("/", (_req, res) => {
-  res.json({ status: "ok", message: "뉴스쉐어 API 서버" });
+  res.json({ status: "ok", message: "NewShare API 서버" });
 });
 
 export default app;
