@@ -188,6 +188,7 @@ Respond with this exact JSON structure (no markdown, pure JSON):
               { role: "system", content: [{ type: "text", text: systemPrompt }] },
               { role: "user", content: [{ type: "text", text: userPrompt }] },
             ],
+            responseFormat: { type: "json_object" },
           });
         } catch (err) {
           throw new TRPCError({
