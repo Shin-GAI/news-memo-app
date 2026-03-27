@@ -14,6 +14,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -365,6 +366,13 @@ export default function HomeScreen() {
 
   // Active filter count for indicator
   const activeFilterCount = (dateFilter !== "all" ? 1 : 0) + (selectedCategory ? 1 : 0);
+
+  // Reload memos whenever this screen comes into focus (e.g. returning from process modal)
+  useFocusEffect(
+    useCallback(() => {
+      loadMemos();
+    }, [loadMemos])
+  );
 
   // Handle incoming share intent
   useEffect(() => {

@@ -47,8 +47,8 @@ export interface SummarizeResponse {
 export type SummaryLength = "short" | "medium" | "long";
 export type SummaryTone = "expert" | "casual";
 export type AIEngineType = "cloud" | "google_edge" | "samsung_edge";
-export type ThemeVariant = "default" | "mono" | "blue" | "pink";
-export type FontVariant = "system" | "serif" | "rounded";
+export type ThemeVariant = "default" | "mono" | "green" | "pink";
+export type FontVariant = "system" | "serif" | "handwriting";
 
 export interface AppSettings {
   summaryLength: SummaryLength;
