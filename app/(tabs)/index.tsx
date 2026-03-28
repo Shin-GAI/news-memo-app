@@ -53,17 +53,17 @@ function getDateRange(filter: DateFilter): { start?: Date; end?: Date } {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  기술: "#6366F1",
-  경제: "#F59E0B",
-  사회: "#10B981",
-  정치: "#EF4444",
-  문화: "#EC4899",
-  과학: "#3B82F6",
-  스포츠: "#F97316",
+  기술: "#5856D6",
+  경제: "#FF9500",
+  사회: "#34C759",
+  정치: "#FF3B30",
+  문화: "#FF2D55",
+  과학: "#007AFF",
+  스포츠: "#FF6B00",
 };
 
 function getCategoryColor(major: string): string {
-  return CATEGORY_COLORS[major] ?? "#6B7280";
+  return CATEGORY_COLORS[major] ?? "#8E8E93";
 }
 
 function EmptyState({
@@ -75,8 +75,8 @@ function EmptyState({
 }) {
   return (
     <View style={styles.emptyContainer}>
-      <View style={[styles.emptyIconBg, { backgroundColor: colors.primary + "15" }]}>
-        <IconSymbol name="newspaper.fill" size={48} color={colors.primary} />
+      <View style={[styles.emptyIconBg, { backgroundColor: colors.primary + "18" }]}>
+        <IconSymbol name="newspaper.fill" size={44} color={colors.primary} />
       </View>
       <Text style={[styles.emptyTitle, { color: colors.foreground }]}>저장된 메모가 없습니다</Text>
       <Text style={[styles.emptyDesc, { color: colors.muted }]}>
@@ -91,17 +91,17 @@ function EmptyState({
         style={({ pressed }) => [
           styles.manualInputBtn,
           { backgroundColor: colors.primary },
-          pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+          pressed && { opacity: 0.82, transform: [{ scale: 0.97 }] },
         ]}
       >
-        <IconSymbol name="link" size={18} color="#fff" />
+        <IconSymbol name="link" size={17} color="#fff" />
         <Text style={styles.manualInputBtnText}>URL 직접 입력하기</Text>
       </Pressable>
 
       <View
         style={[
           styles.howToCard,
-          { backgroundColor: colors.surface, borderColor: colors.border },
+          { backgroundColor: colors.surface },
         ]}
       >
         <Text style={[styles.howToTitle, { color: colors.foreground }]}>크롬에서 공유하는 방법</Text>
@@ -137,7 +137,7 @@ function MemoCard({
   const platformColors: Record<string, string> = {
     linkedin: "#0A66C2",
     twitter: "#1DA1F2",
-    general: "#00C896",
+    general: "#34C759",
   };
   const platformLabels: Record<string, string> = {
     linkedin: "LinkedIn",
@@ -172,15 +172,15 @@ function MemoCard({
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: colors.card, borderColor: colors.border },
-        pressed && { opacity: 0.88, transform: [{ scale: 0.99 }] },
+        { backgroundColor: colors.card },
+        pressed && { opacity: 0.85, transform: [{ scale: 0.988 }] },
       ]}
     >
       {/* Card top: category chip + date + delete */}
       <View style={styles.cardTopRow}>
         <View style={styles.cardTopLeft}>
           {memo.category?.major ? (
-            <View style={[styles.categoryChip, { backgroundColor: categoryColor + "18" }]}>
+            <View style={[styles.categoryChip, { backgroundColor: categoryColor + "15" }]}>
               <View style={[styles.categoryDot, { backgroundColor: categoryColor }]} />
               <Text style={[styles.categoryChipText, { color: categoryColor }]}>
                 {memo.category.major}
@@ -194,10 +194,10 @@ function MemoCard({
           <Text style={[styles.cardDate, { color: colors.muted }]}>{dateStr}</Text>
           <Pressable
             onPress={handleDelete}
-            style={({ pressed }) => [styles.deleteBtn, pressed && { opacity: 0.5 }]}
-            hitSlop={8}
+            style={({ pressed }) => [styles.deleteBtn, pressed && { opacity: 0.4 }]}
+            hitSlop={10}
           >
-            <IconSymbol name="trash" size={14} color={colors.muted} />
+            <IconSymbol name="trash" size={13} color={colors.muted} />
           </Pressable>
         </View>
       </View>
@@ -215,7 +215,7 @@ function MemoCard({
       {/* Footer: source domain + platform badges */}
       <View style={styles.cardFooter}>
         <View style={styles.cardSourceRow}>
-          <IconSymbol name="link" size={11} color={colors.muted} />
+          <IconSymbol name="link" size={10} color={colors.muted} />
           <Text style={[styles.cardSource, { color: colors.muted }]} numberOfLines={1}>
             {domain}
           </Text>
@@ -226,7 +226,7 @@ function MemoCard({
               key={m.platform}
               style={[
                 styles.platformBadge,
-                { backgroundColor: platformColors[m.platform] + "1A" },
+                { backgroundColor: platformColors[m.platform] + "18" },
               ]}
             >
               <Text style={[styles.platformBadgeText, { color: platformColors[m.platform] }]}>
@@ -271,7 +271,7 @@ function UrlInputModal({
       >
         <Pressable style={styles.modalBackdrop} onPress={onClose} />
         <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-          <View style={styles.modalHandle} />
+          <View style={[styles.modalHandle, { backgroundColor: colors.muted + "50" }]} />
           <Text style={[styles.modalTitle, { color: colors.foreground }]}>URL 직접 입력</Text>
           <Text style={[styles.modalDesc, { color: colors.muted }]}>
             분석할 뉴스 기사의 URL을 입력해주세요
@@ -279,7 +279,7 @@ function UrlInputModal({
           <View
             style={[
               styles.urlInputContainer,
-              { backgroundColor: colors.background, borderColor: colors.border },
+              { backgroundColor: colors.background },
             ]}
           >
             <IconSymbol name="link" size={16} color={colors.muted} />
@@ -307,22 +307,22 @@ function UrlInputModal({
               onPress={onClose}
               style={({ pressed }) => [
                 styles.modalCancelBtn,
-                { borderColor: colors.border },
+                { backgroundColor: colors.background },
                 pressed && { opacity: 0.7 },
               ]}
             >
-              <Text style={[styles.modalCancelText, { color: colors.muted }]}>취소</Text>
+              <Text style={[styles.modalCancelText, { color: colors.foreground }]}>취소</Text>
             </Pressable>
             <Pressable
               onPress={handleSubmit}
               style={({ pressed }) => [
                 styles.modalSubmitBtn,
-                { backgroundColor: url.trim() ? colors.primary : colors.border },
+                { backgroundColor: url.trim() ? colors.primary : colors.muted + "60" },
                 pressed && { opacity: 0.85 },
               ]}
               disabled={!url.trim()}
             >
-              <IconSymbol name="sparkles" size={16} color="#fff" />
+              <IconSymbol name="sparkles" size={15} color="#fff" />
               <Text style={styles.modalSubmitText}>AI 요약하기</Text>
             </Pressable>
           </View>
@@ -343,29 +343,24 @@ export default function HomeScreen() {
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [showFilterPanel, setShowFilterPanel] = useState(false);
 
-  // Extract unique major categories from memos
   const availableCategories = useAvailableCategories(memos);
 
-  // Date range from preset filter
   const { start: filterStartDate, end: filterEndDate } = useMemo(
     () => getDateRange(dateFilter),
     [dateFilter]
   );
 
-  // Search and filter memos
   const searchResults = useMemoSearch(memos, {
     query: searchQuery,
     startDate: filterStartDate,
     endDate: filterEndDate,
   });
 
-  // Filter by selected category chip
   const filteredMemos = useMemo(() => {
     if (!selectedCategory) return searchResults;
     return searchResults.filter((memo) => memo.category?.major === selectedCategory);
   }, [searchResults, selectedCategory]);
 
-  // Active filter count for indicator
   const activeFilterCount = (dateFilter !== "all" ? 1 : 0) + (selectedCategory ? 1 : 0);
 
   // Reload memos whenever this screen comes into focus (e.g. returning from process modal)
@@ -425,28 +420,23 @@ export default function HomeScreen() {
 
   return (
     <ScreenContainer containerClassName="bg-background">
-      {/* Header */}
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <View style={styles.headerLeft}>
-          <Image source={require("@/assets/images/icon.png")} style={styles.logoMark} />
-          <View>
-            <Text style={[styles.headerTitle, { color: colors.foreground }]}>NewShare</Text>
-            {memos.length > 0 && (
-              <Text style={[styles.headerSubtitle, { color: colors.muted }]}>
-                메모 {memos.length}개
-              </Text>
-            )}
-          </View>
+      {/* Header — Large Title 스타일 */}
+      <View style={[styles.header, { borderBottomColor: colors.border + "80" }]}>
+        <View style={styles.headerTitleRow}>
+          <Text style={[styles.headerTitle, { color: colors.foreground }]}>NewShare</Text>
+          {memos.length > 0 && (
+            <Text style={[styles.headerCount, { color: colors.muted }]}>{memos.length}</Text>
+          )}
         </View>
         <Pressable
           onPress={() => setShowUrlModal(true)}
           style={({ pressed }) => [
             styles.addBtn,
             { backgroundColor: colors.primary },
-            pressed && { opacity: 0.8, transform: [{ scale: 0.96 }] },
+            pressed && { opacity: 0.8, transform: [{ scale: 0.95 }] },
           ]}
         >
-          <IconSymbol name="plus" size={18} color="#fff" />
+          <IconSymbol name="plus" size={16} color="#fff" />
           <Text style={styles.addBtnText}>URL 추가</Text>
         </Pressable>
       </View>
@@ -454,14 +444,14 @@ export default function HomeScreen() {
       {memos.length > 0 && (
         <>
           {/* Search + Filter Row */}
-          <View style={[styles.searchRow, { borderBottomColor: colors.border }]}>
+          <View style={[styles.searchRow, { backgroundColor: colors.background }]}>
             <View
               style={[
                 styles.searchBar,
-                { backgroundColor: colors.surface, borderColor: colors.border },
+                { backgroundColor: colors.surface },
               ]}
             >
-              <IconSymbol name="magnifyingglass" size={15} color={colors.muted} />
+              <IconSymbol name="magnifyingglass" size={14} color={colors.muted} />
               <TextInput
                 placeholder="제목, 내용, 카테고리 검색"
                 placeholderTextColor={colors.muted}
@@ -471,7 +461,7 @@ export default function HomeScreen() {
               />
               {searchQuery.length > 0 && (
                 <Pressable onPress={() => setSearchQuery("")} hitSlop={8}>
-                  <IconSymbol name="xmark.circle.fill" size={15} color={colors.muted} />
+                  <IconSymbol name="xmark.circle.fill" size={14} color={colors.muted} />
                 </Pressable>
               )}
             </View>
@@ -483,16 +473,14 @@ export default function HomeScreen() {
               style={({ pressed }) => [
                 styles.filterBtn,
                 {
-                  backgroundColor:
-                    activeFilterCount > 0 ? colors.primary : colors.surface,
-                  borderColor: activeFilterCount > 0 ? colors.primary : colors.border,
+                  backgroundColor: activeFilterCount > 0 ? colors.primary : colors.surface,
                 },
                 pressed && { opacity: 0.7 },
               ]}
             >
               <IconSymbol
                 name="slider.horizontal.3"
-                size={16}
+                size={15}
                 color={activeFilterCount > 0 ? "#fff" : colors.muted}
               />
               {activeFilterCount > 0 && (
@@ -505,8 +493,7 @@ export default function HomeScreen() {
 
           {/* Filter Panel */}
           {showFilterPanel && (
-            <View style={[styles.filterPanel, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-              {/* Date Filter */}
+            <View style={[styles.filterPanel, { backgroundColor: colors.surface }]}>
               <View style={styles.filterSection}>
                 <Text style={[styles.filterLabel, { color: colors.muted }]}>기간</Text>
                 <View style={styles.filterChipRow}>
@@ -521,8 +508,7 @@ export default function HomeScreen() {
                         styles.filterChip,
                         {
                           backgroundColor:
-                            dateFilter === key ? colors.primary + "18" : colors.background,
-                          borderColor: dateFilter === key ? colors.primary : colors.border,
+                            dateFilter === key ? colors.primary : colors.background,
                         },
                         pressed && { opacity: 0.7 },
                       ]}
@@ -530,7 +516,7 @@ export default function HomeScreen() {
                       <Text
                         style={[
                           styles.filterChipText,
-                          { color: dateFilter === key ? colors.primary : colors.muted },
+                          { color: dateFilter === key ? "#fff" : colors.muted },
                         ]}
                       >
                         {label}
@@ -540,7 +526,6 @@ export default function HomeScreen() {
                 </View>
               </View>
 
-              {/* Reset button */}
               {activeFilterCount > 0 && (
                 <Pressable
                   onPress={() => {
@@ -551,23 +536,23 @@ export default function HomeScreen() {
                   }}
                   style={({ pressed }) => [
                     styles.resetBtn,
-                    { borderColor: colors.border },
+                    { backgroundColor: colors.background },
                     pressed && { opacity: 0.7 },
                   ]}
                 >
-                  <IconSymbol name="xmark" size={12} color={colors.muted} />
+                  <IconSymbol name="xmark" size={11} color={colors.muted} />
                   <Text style={[styles.resetBtnText, { color: colors.muted }]}>필터 초기화</Text>
                 </Pressable>
               )}
             </View>
           )}
 
-          {/* Category Chips */}
+          {/* Category Pills */}
           {availableCategories.length > 0 && (
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              style={[styles.categoryScroll, { borderBottomColor: colors.border }]}
+              style={[styles.categoryScroll, { backgroundColor: colors.background }]}
               contentContainerStyle={styles.categoryScrollContent}
             >
               <Pressable
@@ -576,7 +561,6 @@ export default function HomeScreen() {
                   styles.categoryPill,
                   {
                     backgroundColor: !selectedCategory ? colors.primary : colors.surface,
-                    borderColor: !selectedCategory ? colors.primary : colors.border,
                   },
                   pressed && { opacity: 0.7 },
                 ]}
@@ -604,7 +588,6 @@ export default function HomeScreen() {
                       styles.categoryPill,
                       {
                         backgroundColor: isSelected ? catColor : colors.surface,
-                        borderColor: isSelected ? catColor : colors.border,
                       },
                       pressed && { opacity: 0.7 },
                     ]}
@@ -648,7 +631,7 @@ export default function HomeScreen() {
           )}
           ListEmptyComponent={
             <View style={styles.noResultsContainer}>
-              <IconSymbol name="magnifyingglass" size={36} color={colors.muted} />
+              <IconSymbol name="magnifyingglass" size={32} color={colors.muted} />
               <Text style={[styles.noResultsText, { color: colors.muted }]}>
                 검색 결과가 없습니다
               </Text>
@@ -686,90 +669,84 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  // Header
+
+  // ── Header ───────────────────────────────────────────────────────────────
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingVertical: 14,
+    paddingTop: 8,
+    paddingBottom: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  headerLeft: {
+  headerTitleRow: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  logoMark: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
+    alignItems: "baseline",
+    gap: 8,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 28,
     fontWeight: "700",
     letterSpacing: -0.5,
-    lineHeight: 22,
   },
-  headerSubtitle: {
-    fontSize: 11,
+  headerCount: {
+    fontSize: 16,
     fontWeight: "400",
-    lineHeight: 14,
   },
   addBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 5,
     paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingVertical: 9,
+    borderRadius: 22,
   },
   addBtnText: {
     color: "#fff",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
+    letterSpacing: -0.1,
   },
-  // Search Row
+
+  // ── Search Row ────────────────────────────────────────────────────────────
   searchRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   searchBar: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 7,
     paddingHorizontal: 12,
-    paddingVertical: 9,
+    paddingVertical: 10,
     borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
   },
   searchInput: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 15,
     paddingVertical: 0,
   },
   filterBtn: {
     width: 40,
-    height: 38,
+    height: 40,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: StyleSheet.hairlineWidth,
     position: "relative",
   },
   filterBadge: {
     position: "absolute",
-    top: -4,
-    right: -4,
-    width: 16,
-    height: 16,
+    top: -3,
+    right: -3,
+    width: 15,
+    height: 15,
     borderRadius: 8,
-    backgroundColor: "#EF4444",
+    backgroundColor: "#FF3B30",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -778,32 +755,30 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: "700",
   },
-  // Filter Panel
+
+  // ── Filter Panel ──────────────────────────────────────────────────────────
   filterPanel: {
     paddingHorizontal: 16,
     paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
     gap: 12,
   },
   filterSection: {
     gap: 8,
   },
   filterLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
+    letterSpacing: 0.2,
   },
   filterChipRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: 7,
     flexWrap: "wrap",
   },
   filterChip: {
     paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingVertical: 7,
     borderRadius: 20,
-    borderWidth: 1,
   },
   filterChipText: {
     fontSize: 13,
@@ -814,43 +789,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 7,
+    borderRadius: 10,
     alignSelf: "flex-start",
   },
   resetBtnText: {
     fontSize: 12,
     fontWeight: "500",
   },
-  // Category Chips
-  categoryScroll: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
+
+  // ── Category Pills ────────────────────────────────────────────────────────
+  categoryScroll: {},
   categoryScrollContent: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    gap: 8,
+    gap: 7,
   },
   categoryPill: {
     paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingVertical: 7,
     borderRadius: 20,
-    borderWidth: 1,
   },
   categoryPillText: {
     fontSize: 13,
     fontWeight: "500",
   },
-  // List
+
+  // ── List ──────────────────────────────────────────────────────────────────
   listContent: {
     paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 32,
+    paddingTop: 12,
+    paddingBottom: 36,
     flexGrow: 1,
     gap: 10,
   },
-  // No Results
+
+  // ── No Results ────────────────────────────────────────────────────────────
   noResultsContainer: {
     flex: 1,
     alignItems: "center",
@@ -866,39 +840,40 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginTop: 4,
   },
-  // Empty State
+
+  // ── Empty State ───────────────────────────────────────────────────────────
   emptyContainer: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 32,
+    paddingTop: 36,
     paddingHorizontal: 24,
     gap: 16,
   },
   emptyIconBg: {
-    width: 96,
-    height: 96,
-    borderRadius: 24,
+    width: 90,
+    height: 90,
+    borderRadius: 26,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 4,
   },
   emptyTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "700",
-    letterSpacing: -0.3,
+    letterSpacing: -0.4,
   },
   emptyDesc: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 23,
     textAlign: "center",
   },
   manualInputBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    borderRadius: 14,
+    paddingHorizontal: 26,
+    paddingVertical: 15,
+    borderRadius: 16,
     marginTop: 4,
   },
   manualInputBtnText: {
@@ -910,7 +885,6 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 16,
     padding: 18,
-    borderWidth: 1,
     gap: 12,
   },
   howToTitle: {
@@ -939,17 +913,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
-  // Card
+
+  // ── Card ──────────────────────────────────────────────────────────────────
   card: {
     borderRadius: 16,
     padding: 16,
-    borderWidth: StyleSheet.hairlineWidth,
     gap: 8,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.07,
+    shadowRadius: 10,
+    elevation: 2,
   },
   cardTopRow: {
     flexDirection: "row",
@@ -985,21 +959,21 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   cardDate: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "400",
   },
   deleteBtn: {
     padding: 2,
   },
   cardTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "600",
-    lineHeight: 22,
-    letterSpacing: -0.2,
+    lineHeight: 23,
+    letterSpacing: -0.3,
   },
   cardSummary: {
-    fontSize: 13,
-    lineHeight: 19,
+    fontSize: 14,
+    lineHeight: 21,
   },
   cardFooter: {
     flexDirection: "row",
@@ -1014,7 +988,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardSource: {
-    fontSize: 11,
+    fontSize: 12,
     flex: 1,
   },
   platformBadges: {
@@ -1022,42 +996,42 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   platformBadge: {
-    paddingHorizontal: 7,
+    paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 5,
+    borderRadius: 6,
   },
   platformBadgeText: {
     fontSize: 10,
     fontWeight: "600",
   },
-  // URL Input Modal
+
+  // ── URL Input Modal ───────────────────────────────────────────────────────
   modalOverlay: {
     flex: 1,
     justifyContent: "flex-end",
   },
   modalBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.45)",
   },
   modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 24,
-    paddingBottom: 40,
+    paddingBottom: 44,
     gap: 14,
   },
   modalHandle: {
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#ccc",
     alignSelf: "center",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "700",
-    letterSpacing: -0.3,
+    letterSpacing: -0.4,
   },
   modalDesc: {
     fontSize: 14,
@@ -1068,13 +1042,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     borderRadius: 12,
-    borderWidth: 1,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 13,
   },
   urlInput: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 20,
   },
   modalActions: {
@@ -1084,9 +1057,8 @@ const styles = StyleSheet.create({
   },
   modalCancelBtn: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: 16,
     borderRadius: 14,
-    borderWidth: 1,
     alignItems: "center",
   },
   modalCancelText: {
@@ -1099,7 +1071,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    paddingVertical: 14,
+    paddingVertical: 16,
     borderRadius: 14,
   },
   modalSubmitText: {

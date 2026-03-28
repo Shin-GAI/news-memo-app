@@ -24,21 +24,21 @@ import type { Memo, Platform as MemoPlat } from "@/shared/types";
 const PLATFORM_CONFIG: Record<MemoPlat, { label: string; color: string; icon: string; maxChars: number; desc: string }> = {
   linkedin: { label: "LinkedIn", color: "#0A66C2", icon: "text.bubble", maxChars: 3000, desc: "전문적 네트워크" },
   twitter: { label: "Twitter / X", color: "#1DA1F2", icon: "paperplane.fill", maxChars: 280, desc: "짧고 임팩트 있게" },
-  general: { label: "일반 메모", color: "#00C896", icon: "doc.on.doc", maxChars: 1000, desc: "자유로운 메모" },
+  general: { label: "일반 메모", color: "#34C759", icon: "doc.on.doc", maxChars: 1000, desc: "자유로운 메모" },
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
-  기술: "#6366F1",
-  경제: "#F59E0B",
-  사회: "#10B981",
-  정치: "#EF4444",
-  문화: "#EC4899",
-  과학: "#3B82F6",
-  스포츠: "#F97316",
+  기술: "#5856D6",
+  경제: "#FF9500",
+  사회: "#34C759",
+  정치: "#FF3B30",
+  문화: "#FF2D55",
+  과학: "#007AFF",
+  스포츠: "#FF6B00",
 };
 
 function getCategoryColor(major: string): string {
-  return CATEGORY_COLORS[major] ?? "#6B7280";
+  return CATEGORY_COLORS[major] ?? "#8E8E93";
 }
 
 function SectionLabel({ icon, label, color, colors }: {
@@ -49,18 +49,15 @@ function SectionLabel({ icon, label, color, colors }: {
 }) {
   return (
     <View style={sectionStyles.row}>
-      <View style={[sectionStyles.iconBg, { backgroundColor: (color ?? colors.primary) + "15" }]}>
-        <IconSymbol name={icon as never} size={13} color={color ?? colors.primary} />
-      </View>
+      <IconSymbol name={icon as never} size={14} color={color ?? colors.primary} />
       <Text style={[sectionStyles.label, { color: color ?? colors.primary }]}>{label}</Text>
     </View>
   );
 }
 
 const sectionStyles = StyleSheet.create({
-  row: { flexDirection: "row", alignItems: "center", gap: 7 },
-  iconBg: { width: 24, height: 24, borderRadius: 7, justifyContent: "center", alignItems: "center" },
-  label: { fontSize: 12, fontWeight: "700", letterSpacing: 0.2, textTransform: "uppercase" },
+  row: { flexDirection: "row", alignItems: "center", gap: 6 },
+  label: { fontSize: 13, fontWeight: "600", letterSpacing: -0.1 },
 });
 
 export default function MemoDetailScreen() {
@@ -194,7 +191,7 @@ export default function MemoDetailScreen() {
   return (
     <ScreenContainer containerClassName="bg-background">
       {/* Navigation Header */}
-      <View style={[styles.navHeader, { borderBottomColor: colors.border }]}>
+      <View style={[styles.navHeader, { borderBottomColor: colors.border + "80" }]}>
         <Pressable
           onPress={() => {
             if (isEditing) {
@@ -206,9 +203,9 @@ export default function MemoDetailScreen() {
               router.back();
             }
           }}
-          style={({ pressed }) => [styles.navBackBtn, pressed && { opacity: 0.6 }]}
+          style={({ pressed }) => [styles.navBackBtn, pressed && { opacity: 0.5 }]}
         >
-          <IconSymbol name="chevron.left" size={20} color={colors.primary} />
+          <IconSymbol name="chevron.left" size={18} color={colors.primary} />
           <Text style={[styles.navBackText, { color: colors.primary }]}>뒤로</Text>
         </Pressable>
 
@@ -231,9 +228,9 @@ export default function MemoDetailScreen() {
           ) : (
             <Pressable
               onPress={handleDelete}
-              style={({ pressed }) => [styles.navIconBtn, pressed && { opacity: 0.6 }]}
+              style={({ pressed }) => [styles.navIconBtn, pressed && { opacity: 0.5 }]}
             >
-              <IconSymbol name="trash" size={18} color={colors.error} />
+              <IconSymbol name="trash" size={17} color={colors.error} />
             </Pressable>
           )}
         </View>
@@ -247,7 +244,7 @@ export default function MemoDetailScreen() {
         {/* Meta row: category + date */}
         <View style={styles.metaRow}>
           {memo.category?.major && (
-            <View style={[styles.categoryChip, { backgroundColor: categoryColor + "18" }]}>
+            <View style={[styles.categoryChip, { backgroundColor: categoryColor + "15" }]}>
               <View style={[styles.categoryDot, { backgroundColor: categoryColor }]} />
               <Text style={[styles.categoryChipText, { color: categoryColor }]}>
                 {memo.category.major}
@@ -259,15 +256,15 @@ export default function MemoDetailScreen() {
           <Text style={[styles.metaDate, { color: colors.muted }]}>{dateStr}</Text>
         </View>
 
-        {/* ── 섹션 1: 뉴스 출처 ── */}
+        {/* ── 뉴스 출처 ── */}
         <View style={styles.section}>
           <SectionLabel icon="link" label="뉴스 출처" colors={colors} />
           <Pressable
             onPress={handleOpenUrl}
             style={({ pressed }) => [
               styles.articleCard,
-              { backgroundColor: colors.card, borderColor: colors.border },
-              pressed && { opacity: 0.8 },
+              { backgroundColor: colors.surface },
+              pressed && { opacity: 0.78 },
             ]}
           >
             <Text style={[styles.articleTitle, { color: colors.foreground }]} numberOfLines={3}>
@@ -285,20 +282,20 @@ export default function MemoDetailScreen() {
           </Pressable>
         </View>
 
-        {/* ── 섹션 2: AI 핵심 요약 ── */}
+        {/* ── AI 핵심 요약 ── */}
         <View style={styles.section}>
           <SectionLabel icon="sparkles" label="AI 핵심 요약" colors={colors} />
-          <View style={[styles.summaryCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={[styles.summaryCard, { backgroundColor: colors.surface }]}>
             <Text style={[styles.summaryText, { color: colors.foreground }]}>{memo.summary}</Text>
           </View>
         </View>
 
-        {/* ── 섹션 3: 소셜미디어 드래프트 ── */}
+        {/* ── 소셜미디어 드래프트 ── */}
         <View style={styles.section}>
           <SectionLabel icon="square.and.arrow.up" label="소셜미디어 드래프트" colors={colors} />
 
-          {/* Platform Tabs */}
-          <View style={[styles.platformTabsContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          {/* Platform Tabs — iOS Segmented Control 스타일 */}
+          <View style={[styles.segmentedControl, { backgroundColor: colors.border + "80" }]}>
             {(Object.keys(PLATFORM_CONFIG) as MemoPlat[]).map((platform) => {
               const pc = PLATFORM_CONFIG[platform];
               const isSelected = selectedPlatform === platform;
@@ -307,22 +304,26 @@ export default function MemoDetailScreen() {
                   key={platform}
                   onPress={() => handlePlatformChange(platform)}
                   style={({ pressed }) => [
-                    styles.platformTab,
-                    isSelected && [styles.platformTabActive, { backgroundColor: pc.color }],
-                    pressed && { opacity: 0.8 },
+                    styles.segmentTab,
+                    isSelected && [
+                      styles.segmentTabActive,
+                      { backgroundColor: colors.surface },
+                    ],
+                    pressed && !isSelected && { opacity: 0.7 },
                   ]}
                 >
                   <Text
                     style={[
-                      styles.platformTabText,
-                      { color: isSelected ? "#fff" : colors.muted },
+                      styles.segmentTabText,
+                      { color: isSelected ? colors.foreground : colors.muted },
+                      isSelected && { fontWeight: "600" },
                     ]}
                     numberOfLines={1}
                   >
                     {pc.label}
                   </Text>
                   {isSelected && (
-                    <Text style={[styles.platformTabDesc, { color: "rgba(255,255,255,0.75)" }]}>
+                    <Text style={[styles.segmentTabDesc, { color: colors.muted }]}>
                       {pc.desc}
                     </Text>
                   )}
@@ -331,14 +332,14 @@ export default function MemoDetailScreen() {
             })}
           </View>
 
-          {/* Draft Editor */}
+          {/* Draft Card */}
           <View
             style={[
               styles.draftCard,
               {
-                backgroundColor: colors.card,
-                borderColor: isOverLimit ? colors.error : isEditing ? config.color : colors.border,
-                borderWidth: isEditing ? 1.5 : StyleSheet.hairlineWidth,
+                backgroundColor: colors.surface,
+                borderColor: isOverLimit ? colors.error : isEditing ? config.color : "transparent",
+                borderWidth: isEditing || isOverLimit ? 1.5 : 0,
               },
             ]}
           >
@@ -364,14 +365,16 @@ export default function MemoDetailScreen() {
                 style={({ pressed }) => [
                   styles.editToggleBtn,
                   {
-                    backgroundColor: isEditing ? colors.error + "12" : colors.primary + "12",
+                    backgroundColor: isEditing
+                      ? colors.error + "12"
+                      : colors.primary + "12",
                   },
                   pressed && { opacity: 0.6 },
                 ]}
               >
                 <IconSymbol
                   name={isEditing ? "xmark" : "pencil"}
-                  size={12}
+                  size={11}
                   color={isEditing ? colors.error : colors.primary}
                 />
                 <Text
@@ -400,14 +403,9 @@ export default function MemoDetailScreen() {
               <Text style={[styles.draftText, { color: colors.foreground }]}>{currentText}</Text>
             )}
 
-            {/* Footer: char count */}
+            {/* Char count */}
             <View style={styles.draftFooter}>
-              <View
-                style={[
-                  styles.charBar,
-                  { backgroundColor: colors.border },
-                ]}
-              >
+              <View style={[styles.charBar, { backgroundColor: colors.border }]}>
                 <View
                   style={[
                     styles.charBarFill,
@@ -418,12 +416,7 @@ export default function MemoDetailScreen() {
                   ]}
                 />
               </View>
-              <Text
-                style={[
-                  styles.charCount,
-                  { color: isOverLimit ? colors.error : colors.muted },
-                ]}
-              >
+              <Text style={[styles.charCount, { color: isOverLimit ? colors.error : colors.muted }]}>
                 {charCount.toLocaleString()} / {config.maxChars.toLocaleString()}자
               </Text>
             </View>
@@ -437,14 +430,13 @@ export default function MemoDetailScreen() {
                 styles.actionBtnSecondary,
                 {
                   backgroundColor: copySuccess ? colors.success : colors.surface,
-                  borderColor: copySuccess ? colors.success : colors.border,
                 },
                 pressed && { opacity: 0.8 },
               ]}
             >
               <IconSymbol
                 name={copySuccess ? "checkmark" : "doc.on.doc"}
-                size={16}
+                size={15}
                 color={copySuccess ? "#fff" : colors.foreground}
               />
               <Text
@@ -462,25 +454,25 @@ export default function MemoDetailScreen() {
               style={({ pressed }) => [
                 styles.actionBtnPrimary,
                 { backgroundColor: config.color },
-                pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+                pressed && { opacity: 0.85, transform: [{ scale: 0.97 }] },
               ]}
             >
-              <IconSymbol name="square.and.arrow.up" size={16} color="#fff" />
+              <IconSymbol name="square.and.arrow.up" size={15} color="#fff" />
               <Text style={styles.actionBtnPrimaryText}>{config.label}에 공유</Text>
             </Pressable>
           </View>
         </View>
 
-        {/* ── 섹션 4: 내 노트 ── */}
+        {/* ── 내 노트 ── */}
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
             <SectionLabel icon="note.text" label="내 노트" color={colors.muted} colors={colors} />
             {!isEditingNotes ? (
               <Pressable
                 onPress={() => setIsEditingNotes(true)}
-                style={({ pressed }) => [styles.smallEditBtn, pressed && { opacity: 0.6 }]}
+                style={({ pressed }) => [styles.smallEditBtn, pressed && { opacity: 0.5 }]}
               >
-                <IconSymbol name="pencil" size={12} color={colors.primary} />
+                <IconSymbol name="pencil" size={11} color={colors.primary} />
                 <Text style={[styles.smallEditBtnText, { color: colors.primary }]}>편집</Text>
               </Pressable>
             ) : (
@@ -490,13 +482,13 @@ export default function MemoDetailScreen() {
                     setIsEditingNotes(false);
                     setUserNotes(memo.userNotes ?? "");
                   }}
-                  style={({ pressed }) => [styles.smallEditBtn, pressed && { opacity: 0.6 }]}
+                  style={({ pressed }) => [styles.smallEditBtn, pressed && { opacity: 0.5 }]}
                 >
                   <Text style={[styles.smallEditBtnText, { color: colors.muted }]}>취소</Text>
                 </Pressable>
                 <Pressable
                   onPress={handleSaveUserNotes}
-                  style={({ pressed }) => [styles.smallEditBtn, pressed && { opacity: 0.6 }]}
+                  style={({ pressed }) => [styles.smallEditBtn, pressed && { opacity: 0.5 }]}
                 >
                   <Text style={[styles.smallEditBtnText, { color: colors.primary, fontWeight: "700" }]}>
                     저장
@@ -510,9 +502,9 @@ export default function MemoDetailScreen() {
             style={[
               styles.notesCard,
               {
-                backgroundColor: colors.card,
-                borderColor: isEditingNotes ? colors.primary : colors.border,
-                borderWidth: isEditingNotes ? 1.5 : StyleSheet.hairlineWidth,
+                backgroundColor: colors.surface,
+                borderColor: isEditingNotes ? colors.primary : "transparent",
+                borderWidth: isEditingNotes ? 1.5 : 0,
               },
             ]}
           >
@@ -539,7 +531,7 @@ export default function MemoDetailScreen() {
           </View>
         </View>
 
-        {/* ── 섹션 5: 연관 메모 ── */}
+        {/* ── 연관 메모 ── */}
         {relatedMemos.length > 0 && (
           <View style={styles.section}>
             <SectionLabel icon="link.circle" label="연관 메모" color={colors.muted} colors={colors} />
@@ -553,7 +545,7 @@ export default function MemoDetailScreen() {
                   }}
                   style={({ pressed }) => [
                     styles.relatedCard,
-                    { backgroundColor: colors.card, borderColor: colors.border },
+                    { backgroundColor: colors.surface },
                     pressed && { opacity: 0.7 },
                   ]}
                 >
@@ -585,7 +577,7 @@ const styles = StyleSheet.create({
   notFoundText: { fontSize: 16 },
   backLink: { fontSize: 16, fontWeight: "600" },
 
-  // Nav Header
+  // ── Nav Header ────────────────────────────────────────────────────────────
   navHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -615,8 +607,8 @@ const styles = StyleSheet.create({
   },
   navSaveBtn: {
     paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 8,
+    paddingVertical: 7,
+    borderRadius: 10,
   },
   navSaveBtnText: {
     color: "#fff",
@@ -627,15 +619,15 @@ const styles = StyleSheet.create({
     padding: 4,
   },
 
-  // Scroll Content
+  // ── Scroll Content ────────────────────────────────────────────────────────
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 48,
+    paddingTop: 18,
+    paddingBottom: 52,
     gap: 24,
   },
 
-  // Meta Row
+  // ── Meta Row ──────────────────────────────────────────────────────────────
   metaRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -660,11 +652,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   metaDate: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "400",
   },
 
-  // Section
+  // ── Section ───────────────────────────────────────────────────────────────
   section: {
     gap: 10,
   },
@@ -674,23 +666,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  // Article Card
+  // ── Article Card ──────────────────────────────────────────────────────────
   articleCard: {
     borderRadius: 14,
-    padding: 14,
-    borderWidth: StyleSheet.hairlineWidth,
+    padding: 16,
     gap: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 2,
   },
   articleTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "600",
-    lineHeight: 22,
-    letterSpacing: -0.2,
+    lineHeight: 23,
+    letterSpacing: -0.3,
   },
   articleDomainRow: {
     flexDirection: "row",
@@ -705,36 +696,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   articleDomain: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "500",
     flex: 1,
   },
 
-  // Summary Card
+  // ── Summary Card ──────────────────────────────────────────────────────────
   summaryCard: {
     borderRadius: 14,
     padding: 16,
-    borderWidth: StyleSheet.hairlineWidth,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 2,
   },
   summaryText: {
-    fontSize: 14,
-    lineHeight: 23,
+    fontSize: 15,
+    lineHeight: 24,
   },
 
-  // Platform Tabs Container
-  platformTabsContainer: {
+  // ── Segmented Control ─────────────────────────────────────────────────────
+  segmentedControl: {
     flexDirection: "row",
     borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 4,
-    gap: 4,
+    padding: 3,
+    gap: 2,
   },
-  platformTab: {
+  segmentTab: {
     flex: 1,
     paddingVertical: 8,
     paddingHorizontal: 4,
@@ -742,33 +731,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 2,
   },
-  platformTabActive: {
+  segmentTabActive: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.12,
-    shadowRadius: 3,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     elevation: 2,
   },
-  platformTabText: {
+  segmentTabText: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: "500",
     textAlign: "center",
   },
-  platformTabDesc: {
+  segmentTabDesc: {
     fontSize: 9,
     textAlign: "center",
   },
 
-  // Draft Card
+  // ── Draft Card ────────────────────────────────────────────────────────────
   draftCard: {
     borderRadius: 14,
-    padding: 14,
+    padding: 16,
     gap: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 2,
   },
   draftHeader: {
     flexDirection: "row",
@@ -802,13 +791,13 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   draftText: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 23,
     minHeight: 80,
   },
   textInput: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 23,
     minHeight: 120,
     textAlignVertical: "top",
     padding: 0,
@@ -817,51 +806,55 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   charBar: {
-    height: 3,
-    borderRadius: 2,
+    height: 2,
+    borderRadius: 1,
     overflow: "hidden",
   },
   charBarFill: {
-    height: 3,
-    borderRadius: 2,
+    height: 2,
+    borderRadius: 1,
   },
   charCount: {
     fontSize: 11,
     textAlign: "right",
   },
 
-  // Action Buttons
+  // ── Action Buttons ────────────────────────────────────────────────────────
   actionRow: {
     flexDirection: "row",
     gap: 10,
   },
   actionBtnSecondary: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 7,
-    paddingVertical: 13,
-    borderRadius: 12,
-    borderWidth: 1,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 14,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 1,
   },
   actionBtnSecondaryText: {
     fontSize: 14,
     fontWeight: "600",
   },
   actionBtnPrimary: {
-    flex: 2,
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 7,
-    paddingVertical: 13,
-    borderRadius: 12,
+    paddingVertical: 15,
+    borderRadius: 14,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
   },
   actionBtnPrimaryText: {
     color: "#fff",
@@ -869,7 +862,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  // Notes
+  // ── Notes ─────────────────────────────────────────────────────────────────
   smallEditBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -888,35 +881,44 @@ const styles = StyleSheet.create({
   },
   notesCard: {
     borderRadius: 14,
-    padding: 14,
+    padding: 16,
     minHeight: 72,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 2,
   },
   notesText: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 23,
   },
   notesInput: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 23,
     minHeight: 80,
     textAlignVertical: "top",
     padding: 0,
   },
 
-  // Related Memos
+  // ── Related Memos ─────────────────────────────────────────────────────────
   relatedList: {
     gap: 8,
   },
   relatedCard: {
     borderRadius: 12,
-    padding: 12,
-    borderWidth: StyleSheet.hairlineWidth,
+    padding: 14,
     gap: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 1,
   },
   relatedTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "500",
-    lineHeight: 19,
+    lineHeight: 20,
   },
   relatedCategory: {
     fontSize: 11,
