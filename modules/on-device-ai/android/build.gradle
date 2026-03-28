@@ -35,10 +35,10 @@ dependencies {
     // Google AI Edge — Gemini Nano via Play Services GenAI (when available on device)
     // Requires: Pixel 8+ / Android 14+ with AICore system service
     // https://ai.google.dev/edge/mediapipe/solutions/genai/llm_inference/android
-    implementation("com.google.mediapipe:tasks-genai:0.10.22") {
-        // Transitive dependencies can conflict; exclude if needed
-        exclude group: "com.google.protobuf", module: "protobuf-javalite"
-    }
+    // NOTE: Excluded from runtime to prevent startup crash on non-Pixel devices.
+    // The MediaPipe implementation is not yet active (stub throws UnsupportedOperationException).
+    // Re-add as `implementation` only when the MediaPipe LLM API is wired up.
+    // compileOnly("com.google.mediapipe:tasks-genai:0.10.22")
 
     // Samsung Galaxy AI — via SamsungIntelligenceService (One UI 6.1+, Galaxy S24+)
     // Note: Samsung's on-device AI SDK is distributed through Samsung's maven repo.
